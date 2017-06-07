@@ -7,9 +7,11 @@ mkdir -p $TEMP_DIR && cd $TEMP_DIR
 
 # Install NW.js
 if [[ ! -f $ROOT_DIR/src/nw/nw ]]; then
-  wget https://dl.nwjs.io/v0.22.3/nwjs-v0.22.3-linux-x64.tar.gz
-  tar xvzf nwjs-v0.22.3-linux-x64.tar.gz
-  mv nw/* "$ROOT_DIR/src/nw"
+  wget http://dl.nwjs.io/v0.22.3/nwjs-sdk-v0.22.3-linux-x64.tar.gz
+  tar xvzf nwjs-sdk-v0.22.3-linux-x64.tar.gz
+  mv nwjs-sdk-v0.22.3-linux-x64/* "$ROOT_DIR/src/nw"
+  rm nwjs-sdk-v0.22.3-linux-x64.tar.gz
+  rmdir nwjs-sdk-v0.22.3-linux-x64
   rmdir nw
 fi
 
@@ -19,6 +21,8 @@ if [[ ! -f $ROOT_DIR/src/nw/cesium/index.html ]]; then
     wget https://github.com/duniter/cesium/releases/download/v0.12.7/cesium-v0.12.7-web.zip
     unzip cesium-v0.12.7-web.zip
     rm cesium-v0.12.7-web.zip
+    sed -i 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' "index.html"
+    sed -i 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' "debug.html"
     mv * "$ROOT_DIR/src/nw/cesium/"
     cd ..
     rmdir cesium_unzip
