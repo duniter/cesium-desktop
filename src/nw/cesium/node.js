@@ -1,11 +1,15 @@
 // require('nw.gui').Window.get().showDevTools()
 
+// Rename "require" to avoid conflicts with pure JS libraries
+requireNodejs = require
+require = undefined
+
 /**** NODEJS MODULES ****/
 
-const fs = require('fs')
-const path = require('path')
-const yaml = require('js-yaml')
-const bs58 = require('bs58')
+const fs = requireNodejs('fs')
+const path = requireNodejs('path')
+const yaml = requireNodejs('js-yaml')
+const bs58 = requireNodejs('bs58')
 
 Base58 = {
   encode: (bytes) => bs58.encode(bytes),
@@ -14,9 +18,9 @@ Base58 = {
 
 /**** Program ****/
 
-const HOME = require('os').homedir()
+const HOME = requireNodejs('os').homedir()
 const DUNITER_HOME = path.resolve(HOME, '.config/duniter/duniter_default')
-const duniterConf = require(path.resolve(DUNITER_HOME, 'conf.json'))
+const duniterConf = requireNodejs(path.resolve(DUNITER_HOME, 'conf.json'))
 const keyringRaw = fs.readFileSync(path.resolve(DUNITER_HOME, 'keyring.yml'))
 const keyring = yaml.safeLoad(keyringRaw)
 
@@ -113,6 +117,3 @@ if (!data
     window.localStorage.setItem('CESIUM_DATA', JSON.stringify(data));
   }
 }
-
-// Clean "require" command to avoid conflicts with pure JS libraries
-require = undefined
