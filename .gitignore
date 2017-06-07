@@ -1,3 +1,5 @@
+node_modules/
+
 src/nw/lib
 src/nw/locales
 src/nw/node_modules
