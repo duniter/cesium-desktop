@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Cesium
+Exec=cesium
+Icon=/opt/cesium/nw/cesium/img/logo.png
+Type=Application
+Categories=Utility

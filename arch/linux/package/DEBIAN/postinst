@@ -1,0 +1,12 @@
+#!/bin/bash
+
+CESIUM_ROOT=/opt/cesium
+CESIUM_NW=$CESIUM_ROOT/nw
+
+if [[ -f $CESIUM_ROOT/nw.nwb ]]; then
+  unzip -q -d $CESIUM_NW $CESIUM_ROOT/nw.nwb
+  chmod +x $CESIUM_NW/nw $CESIUM_NW/lib $CESIUM_NW/locales
+  ln -s $CESIUM_NW/nw /usr/bin/cesium
+fi
+
+chmod +r -R $CESIUM_ROOT
