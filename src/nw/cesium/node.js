@@ -4,6 +4,8 @@
 requireNodejs = require
 require = undefined
 
+const expectedCurrency = "g1"
+
 /**** NODEJS MODULES ****/
 
 const fs = requireNodejs('fs')
@@ -64,7 +66,6 @@ let dataStr = window.localStorage.getItem('CESIUM_DATA');
 let settings = (settingsStr && JSON.parse(settingsStr));
 let data = (dataStr && JSON.parse(dataStr));
 
-
 let keyPairOK = data && data.keypair && data.keypair.signPk && data.keypair.signSk && true;
 if (keyPairOK) {
   console.log('Trousseau Cesium déjà configuré, comparaison avec celui du nœud local...')
@@ -81,11 +82,12 @@ if (keyPairOK) {
   }
 }
 
-if (!data
+if (duniterConf.currency === expectedCurrency
+  && (!data
   || !keyPairOK
   || settings.node.host != local_host
-  || settings.node.port != local_port) {
-  if (confirm('Un nœud Duniter a été détecté sur cet ordinateur, voulez-vous que Cesium s\'y connecte ? (plus sécurisé)')) {
+  || settings.node.port != local_port)) {
+  if (confirm('Un nœud pour la monnaie ' + expectedCurrency + ' a été détecté sur cet ordinateur, voulez-vous que Cesium s\'y connecte ? (plus sécurisé)')) {
     settings = settings || DEFAULT_CESIUM_SETTINGS;
     data = data || {};
     console.debug('Configuring Cesium...');
