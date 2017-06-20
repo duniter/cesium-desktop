@@ -1,6 +1,7 @@
 #!/bin/bash
 
 CESIUM_ROOT=/opt/cesium
+CESIUM_G1_TEST=/opt/cesium-g1-test
 CESIUM_NW=$CESIUM_ROOT/nw
 
 if [[ -f $CESIUM_ROOT/nw.nwb ]]; then
@@ -10,3 +11,22 @@ if [[ -f $CESIUM_ROOT/nw.nwb ]]; then
 fi
 
 chmod +r -R $CESIUM_ROOT
+
+# Create a Cesium for G1-Test
+cd /opt
+cp -r "$CESIUM_ROOT" "$CESIUM_G1_TEST"
+cd "$CESIUM_G1_TEST/nw/"
+sed -i 's/"cesium"/"cesium-g1-test"/g' package.json
+ln -s "$CESIUM_G1_TEST/nw/nw" /usr/bin/cesium-g1-test
+
+# Change title of Cesium test
+sed -i 's/Cesium/Cesium Ğ1-Test/g' cesium/index.html
+sed -i 's/Cesium/Cesium Ğ1-Test/g' cesium/debug.html
+sed -i 's/g1.duniter/g1-test.duniter/g' cesium/config.js
+sed -i 's/g1.data/g1-test.data/g' cesium/config.js
+sed -i 's/"g1"/"g1-test"/g' cesium/node.js
+
+# Change title of Cesium classic
+cd "$CESIUM_ROOT/nw/"
+sed -i 's/Cesium/Cesium Ğ1/g' cesium/index.html
+sed -i 's/Cesium/Cesium Ğ1/g' cesium/debug.html
