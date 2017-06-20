@@ -2,6 +2,7 @@
   "name": "cesium",
   "main": "cesium/debug.html",
   "window": {
+    "id": "cesium",
     "icon": "cesium/img/logo.png",
     "title": "v0.12.7",
     "width": 1300,
