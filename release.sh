@@ -8,16 +8,32 @@ ARCH=`uname -m`
 if [[ -z $TAG ]]; then
   echo "Wrong call to the command, syntax is:"
   echo ""
-  echo "  new_cesium.sh <tag>"
+  echo "  release.sh <tag>"
   echo ""
   echo "Examples:"
   echo ""
-  echo "  new_cesium.sh 1.2.3"
-  echo "  new_cesium.sh 1.4.0"
-  echo "  new_cesium.sh 1.4.1"
+  echo "  release.sh 1.2.3"
+  echo "  release.sh 1.4.0"
+  echo "  release.sh 1.4.1"
   echo ""
   exit 1
 fi
+
+
+# Force nodejs version to 6
+if [ -d "$NVM_DIR" ]; then
+    . $NVM_DIR/nvm.sh
+    nvm use 6
+else
+    echo "nvm (Node version manager) not found (directory NVM_DIR not defined). Please install nvm, and retry"
+    exit -1
+fi
+
+# install dep if not already done
+if [ ! -d "node_modules" ]; then
+    npm install
+fi
+
 
 echo "Checking that $TAG has been pushed to 'origin'..."
 
@@ -32,9 +48,14 @@ echo "Remote tag: $REMOTE_TAG"
 
 echo "Creating the pre-release if it does not exist..."
 ASSETS=`node ./scripts/create-release.js $REMOTE_TAG create`
-EXPECTED_ASSETS="cesium-desktop-$REMOTE_TAG-linux-x64.deb
+
+
+if [[ "_$EXPECTED_ASSETS" == "_" ]]; then
+  EXPECTED_ASSETS="cesium-desktop-$REMOTE_TAG-linux-x64.deb
 cesium-desktop-$REMOTE_TAG-linux-x64.tar.gz
 cesium-desktop-$REMOTE_TAG-windows-x64.exe"
+fi
+
 for asset in $EXPECTED_ASSETS; do
   if [[ -z `echo $ASSETS | grep -F "$asset"` ]]; then
 

@@ -4,7 +4,7 @@
 
 This script will run Cesium Desktop, taking care of installing Cesium + Nw.js if necessary.
 
-    ./test_cesium.sh
+    ./run.sh
 
 ## Produce new release
 
@@ -20,5 +20,5 @@ This script will produce for a given `TAG`:
 
 To produce `TAG` 0.12.8:
 
-    ./new_cesium.sh 0.12.8
+    ./release.sh 0.12.8
     
