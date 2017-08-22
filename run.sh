@@ -18,9 +18,9 @@ fi
 # Install Cesium web
 if [[ ! -f $ROOT_DIR/src/nw/cesium/index.html ]]; then
     mkdir cesium_unzip && cd cesium_unzip
-    wget https://github.com/duniter/cesium/releases/download/v0.12.7/cesium-v0.12.7-web.zip
-    unzip cesium-v0.12.7-web.zip
-    rm cesium-v0.12.7-web.zip
+    wget https://github.com/duniter/cesium/releases/download/v0.17.0/cesium-v0.17.0-web.zip
+    unzip cesium-v0.17.0-web.zip
+    rm cesium-v0.17.0-web.zip
     sed -i 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' "index.html"
     sed -i 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' "debug.html"
     mv * "$ROOT_DIR/src/nw/cesium/"
