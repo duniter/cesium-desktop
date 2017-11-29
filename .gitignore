@@ -18,8 +18,6 @@ src/nw/cesium/fonts
 src/nw/cesium/img
 src/nw/cesium/lib
 src/nw/cesium/config.js
-src/nw/cesium/license
-src/nw/cesium/api
 src/nw/cesium/*.html
 src/nw/cesium/manifest.json
 
@@ -39,3 +37,7 @@ arch/windows/nw*
 arch/windows/LICENSE.txt
 
 .idea/
+
+src/nw/cesium
+!src/nw/cesium/node.js
+tmp
