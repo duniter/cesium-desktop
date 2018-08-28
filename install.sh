@@ -46,6 +46,8 @@ then
     rm -rf $ROOT_DIR/src/nw/cesium/fonts
     rm -rf $ROOT_DIR/src/nw/cesium/img
     rm -rf $ROOT_DIR/src/nw/cesium/lib
+    rm -rf $ROOT_DIR/src/nw/cesium/api
+    rm -rf $ROOT_DIR/src/nw/cesium/license
     rm -rf $ROOT_DIR/src/nw/cesium/*.html
   fi
 fi

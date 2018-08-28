@@ -17,6 +17,8 @@ src/nw/cesium/dist*
 src/nw/cesium/fonts
 src/nw/cesium/img
 src/nw/cesium/lib
+src/nw/cesium/api
+src/nw/cesium/license
 src/nw/cesium/config.js
 src/nw/cesium/*.html
 src/nw/cesium/manifest.json
