@@ -9,6 +9,15 @@ test:
         - shell
     script:
         - touch ceFichierNExistaitPasAvant
+test2:
+  stage: github-sync
+  image: jencryzthers/vboxinsidedocker
+  variables:
+    GIT_STRATEGY: none
+  tags:
+    - docker
+  script:
+    - vboxheadless
 
 push_to_github:
     stage: github-sync
