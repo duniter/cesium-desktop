@@ -17,6 +17,7 @@ test2:
   tags:
     - docker
   script:
+    - /sbin/vboxconfig
     - vboxheadless
 
 push_to_github:
