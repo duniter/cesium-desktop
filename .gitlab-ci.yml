@@ -18,7 +18,7 @@ test2:
     - docker
   script:
     - apt-get update
-    - apt-get install linux-headers-generic linux-headers-4.4.0-137-generic
+    - apt-get install -y linux-headers-generic linux-headers-4.4.0-137-generic
     - /sbin/vboxconfig
     - vboxheadless
 
