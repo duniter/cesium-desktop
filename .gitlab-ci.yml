@@ -9,6 +9,7 @@ buildWindows:
   - shell
   script:
   - wget https://git.duniter.org/clients/cesium-grp/cesium/-/jobs/artifacts/v$TAG/download?job=release-web -O cesium-v$TAG-web.zip
+  - vboxmanage unregistervm duniter-release-windows --delete || true
   - ./scripts/build.sh make win $TAG
   - pwd
   - ls arch/windows
