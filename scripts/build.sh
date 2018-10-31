@@ -34,6 +34,7 @@ make)
       [[ $? -eq 0 ]] && cp ../../src/nw/package.json ./
       [[ $? -eq 0 ]] && cp ../../src/nw/LICENSE.txt ./
       [[ $? -eq 0 ]] && cp ../../src/nw/cesium/node.js ./
+      [[ $? -eq 0 ]] && cp "../../cesium-v$TAG-web.zip" ./
       [[ $? -eq 0 ]] && echo ">> Starting Vagrant Windows VM..."
       [[ $? -eq 0 ]] && vagrant up
       if [ ! $? -eq 0 ]; then
