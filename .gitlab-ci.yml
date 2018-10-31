@@ -1,22 +1,21 @@
 stages:
-    - builds
+  - builds
 
 buildWindows:
-    stage: builds
-    variables:
-        TAG: 1.test.3
-        EXPECTED_ASSETS: cesium-desktop-1.test.3-windows-x64.exe
-    tags:
-        - shell
-    script:
-        - wget https://git.duniter.org/clients/cesium-grp/cesium/-/jobs/artifacts/v1.test.3/download?job=release-web -O cesium-v$TAG-web.zip
-        - ./scripts/build.sh make win $TAG
-        - pwd
-        - ls arch/windows
+  stage: builds
+  variables:
+    TAG: 1.test.3
+  tags:
+  - shell
+  script:
+  - wget https://git.duniter.org/clients/cesium-grp/cesium/-/jobs/artifacts/v$TAG/download?job=release-web -O cesium-v$TAG-web.zip
+  - ./scripts/build.sh make win $TAG
+  - pwd
+  - ls arch/windows
   artifacts:
     untracked: true
     paths:
-      - arch/windows
+    - arch/windows
     expire_in: 60 minutes
 
 test:
