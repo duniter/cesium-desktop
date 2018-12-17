@@ -6,4 +6,7 @@ Architecture: all
 Installed-Size: 235351
 Maintainer: Benoit Lavenier <benoit.lavenier@e-is.pro>
 Description: Cesium Wallet for G1 currency
+ Cesium is a Wallet (client software) for G1 currency, a P2P libre currency.
+ Visit https://duniter.org for more informations on G1 currency and libre currencies.
 Depends: libgconf-2-4 (>= 3.2.0)
+Homepage: cesium.duniter.io
