@@ -43,3 +43,8 @@ arch/windows/LICENSE.txt
 src/nw/cesium
 !src/nw/cesium/node.js
 tmp
+
+package-lock.json
+src/nw/yarn.lock
+src/nw/swiftshader/libEGL.so
+src/nw/swiftshader/libGLESv2.so
