@@ -1,6 +1,6 @@
 #define MyAppName "Cesium"
 #define MyAppPublisher "Duniter team"
-#define MyAppURL "http://g1.duniter.fr"
+#define MyAppURL "https://cesium.duniter.io"
 #define MyAppExeName "nw.exe"
 
 #if !Defined(ROOT_PATH)

@@ -1,5 +1,5 @@
 
-set NW_VERSION=0.22.3
+set NW_VERSION=0.35.2
 set NW_RELEASE=v%NW_VERSION%
 set NW=nwjs-%NW_RELEASE%-win-x64
 set NW_GZ=%NW%.zip
