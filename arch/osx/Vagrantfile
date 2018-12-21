@@ -1,0 +1,15 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "jhcook/osx-elcapitan-10.11"
+  #config.vm.provision :shell, path: "bootstrap.sh"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "2048"
+  end
+end
+
+#TODO :
+# Get this error: VBoxManage: error: Implementation of the USB 2.0 controller not found!
+# https://askubuntu.com/questions/453393/virtualbox-fails-with-implementation-of-the-usb-2-0-controller-not-found-after

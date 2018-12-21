@@ -19,31 +19,30 @@ Base58 = {
 }
 
 /**** Program ****/
-
 const HOME = requireNodejs('os').homedir()
+const CESIUM_HOME = path.resolve(HOME, '.config/cesium/' + expectedCurrency)
+const CESIUM_KEYRING = path.resolve(CESIUM_HOME, 'keyring.yml')
 const DUNITER_HOME = path.resolve(HOME, '.config/duniter/duniter_default')
-const duniterConf = requireNodejs(path.resolve(DUNITER_HOME, 'conf.json'))
-const keyringRaw = fs.readFileSync(path.resolve(DUNITER_HOME, 'keyring.yml'))
-const keyring = yaml.safeLoad(keyringRaw)
+const DUNITER_CONF = path.resolve(DUNITER_HOME, 'conf.json')
+const DUNITER_KEYRING = path.resolve(DUNITER_HOME, 'keyring.yml')
 
-console.log('home = ', HOME)
-console.log('conf = ', duniterConf)
-console.log('keyring = ', keyring)
-
-const local_host = duniterConf.ipv4
-const local_port = duniterConf.port
-const local_sign_pk = Base58.decode(keyring.pub);
-const local_sign_sk = Base58.decode(keyring.sec);
+let keyringRaw,keyring, keyPairOK;
+console.log('User home = ', HOME);
 
 const DEFAULT_CESIUM_SETTINGS = {
   "useRelative": false,
   "timeWarningExpire": 2592000,
   "useLocalStorage": true,
   "rememberMe": true,
+  "keepAuthIdle": 600,
+  "helptip": {
+    "enable": false
+  },
   "plugins": {
     "es": {
       "enable": true,
       "askEnable": false,
+      "useRemoteStorage": false,
       "host": "g1.data.duniter.fr",
       "port": "443",
       "notifications": {
@@ -54,68 +53,125 @@ const DEFAULT_CESIUM_SETTINGS = {
       }
     }
   },
-  "node": {
-    "host": local_host,
-    "port": local_port
-  },
   "showUDHistory": true
-}
-
-let settingsStr = window.localStorage.getItem('CESIUM_SETTINGS');
-let dataStr = window.localStorage.getItem('CESIUM_DATA');
+};
+let settingsStr = window.localStorage.getItem('settings');
 let settings = (settingsStr && JSON.parse(settingsStr));
-let data = (dataStr && JSON.parse(dataStr));
+let pubkey = settings && window.localStorage.getItem('pubkey');
 
-let keyPairOK = data && data.keypair && data.keypair.signPk && data.keypair.signSk && true;
-if (keyPairOK) {
-  console.log('Trousseau Cesium déjà configuré, comparaison avec celui du nœud local...')
-  data.keypair.signPk.length = local_sign_pk.length;
-  data.keypair.signSk.length = local_sign_sk.length;
-  keyPairOK = Base58.encode(Array.from(data.keypair.signPk)) === keyring.pub
-    && Base58.encode(Array.from(data.keypair.signSk)) === keyring.sec
-    && data.pubkey === keyring.pub;
+
+/**** Checking Cesium keyring file ****/
+
+if (fs.existsSync(CESIUM_KEYRING)) {
+  keyringRaw = fs.readFileSync(CESIUM_KEYRING);
+  keyring = yaml.safeLoad(keyringRaw);
+
+  keyPairOK = !keyring.pub || !keyring.sec;
   if (!keyPairOK) {
-    console.log('Le trousseau Cesium est différent du trousseau du nœud, imposons celui du nœud.')
-    // N.B. : ce comportement devrait être **confirmé** par l'utilisateur via une popup par ex.
-  } else {
-    console.log('Trousseaux identiques : pas de modification du trousseau Cesium à réaliser.')
+    console.log('Invalid Cesium keyring file at ' + CESIUM_KEYRING + '. Skipping.');
+  }
+  else {
+    console.log('Cesium keyring pubkey=', keyring.pub);
+    window.localStorage.setItem('pubkey', keyring.pub);
+    const keepAuthSession = settings && (settings.keepAuthIdle == 9999);
+    if (keepAuthSession) {
+      console.debug('Configuring Cesium secret key...');
+      window.sessionStorage.setItem('seckey', keyring.sec);
+    }
   }
 }
 
-if (duniterConf.currency === expectedCurrency
-  && (!data
-  || !keyPairOK
-  || settings.node.host != local_host
-  || settings.node.port != local_port)) {
-  if (confirm('Un nœud pour la monnaie ' + expectedCurrency + ' a été détecté sur cet ordinateur, voulez-vous que Cesium s\'y connecte ? (plus sécurisé)')) {
-    settings = settings || DEFAULT_CESIUM_SETTINGS;
-    data = data || {};
-    console.debug('Configuring Cesium...');
-    settings.node = {
-      "host": local_host,
-      "port": local_port
-    };
-    settings.plugins = {
-      "es": {
-        "enable": true,
-        "askEnable": false,
-        "host": "g1.data.duniter.fr",
-        "port": "443",
-        "notifications": {
-          "txSent": true,
-          "txReceived": true,
-          "certSent": true,
-          "certReceived": true
-        }
+/**** Checking Duniter configuration files ****/
+
+if (!keyPairOK && fs.existsSync(DUNITER_CONF) && fs.existsSync(DUNITER_KEYRING)) {
+  const duniterConf = requireNodejs(DUNITER_CONF);
+  keyringRaw = fs.readFileSync(DUNITER_KEYRING);
+  keyring = yaml.safeLoad(keyringRaw);
+
+  console.log('Duniter conf = ', duniterConf);
+  console.log('Duniter keyring pubkey = ', keyring.pub);
+
+  const local_host = duniterConf.ipv4 || duniterConf.ipv6;
+  const local_port = duniterConf.port;
+
+  let keyPairOK = pubkey && true;
+  if (keyPairOK) {
+    console.log('Compte connecté dans Cesium. Comparaison avec celui du nœud local...')
+    keyPairOK = data.pubkey === keyring.pub;
+    if (!keyPairOK) {
+      console.log('Le compte Cesium est différent de celui du nœud.')
+      // Check is need to ask user to use node keyring
+      if (settings && settings.askLocalNodeKeyring === false) {
+        console.log("L'utilisateur a demander ultérieurement d'ignorer le basculement sur le nœud local.");
+        keyPairOK = true;
       }
-    };
-    settings.rememberMe = true;
-    data.pubkey = keyring.pub;
-    data.keypair = {
-      signPk: local_sign_pk,
-      signSk: local_sign_sk
-    };
-    window.localStorage.setItem('CESIUM_SETTINGS', JSON.stringify(settings));
-    window.localStorage.setItem('CESIUM_DATA', JSON.stringify(data));
+    } else {
+      console.log('Compte Cesium déjà identique au nœud local.');
+
+      // Configuration de la clef privée, si autorisé dans les paramètres
+      const keepAuthSession = !settings || (settings.keepAuthIdle == 9999);
+      if (keepAuthSession) {
+        console.debug('Configuring Cesium secret key...');
+        window.sessionStorage.setItem('seckey', keyring.sec);
+      }
+    }
   }
+  if (duniterConf.currency === expectedCurrency
+    && (!keyPairOK
+      || (settings && settings.node &&
+        (settings.node.host != local_host || settings.node.port != local_port))
+    )) {
+
+    // Detect locale
+    const locale = (settings && settings.locale && settings.locale.id).split('-')[0] || 'en';
+    console.debug('Using locale: ' + locale);
+
+    const confirmationMessage = (locale === 'fr') ?
+      'Un nœud pour la monnaie ' + expectedCurrency + ' a été détecté sur cet ordinateur, voulez-vous que Cesium s\'y connecte ?' :
+      'A node for currency ' + expectedCurrency + ' has been detected on this computer. Do you want Cesium to connect it?';
+
+    if (confirm(confirmationMessage)) {
+
+      console.debug('Configuring Cesium on local node...');
+
+      // Generate settings, on local node (with node's keyring)
+      const keepAuthSession = !settings || (settings.keepAuthIdle == 9999);
+      settings = settings || DEFAULT_CESIUM_SETTINGS;
+      settings.node = {
+        "host": local_host,
+        "port": local_port
+      };
+      settings.rememberMe = true;
+      settings.useLocalStorage = true;
+      if (keepAuthSession) {
+        settings.keepAuthIdle = 9999;
+      }
+      settings.plugins = settings.plugins || DEFAULT_CESIUM_SETTINGS.plugins;
+      settings.plugins.es = settings.plugins.es || DEFAULT_CESIUM_SETTINGS.plugins.es;
+      if (locale === "fr") {
+        settings.plugins.es.defaultCountry = "France";
+      }
+
+      // Store settings
+      window.localStorage.setItem('settings', JSON.stringify(settings));
+
+      // Store pubkey and seckey (if allowed)
+      window.localStorage.setItem('pubkey', keyring.pub);
+      if (keepAuthSession) {
+        console.debug('Configuring Cesium secret key...');
+        window.sessionStorage.setItem('seckey', keyring.sec);
+      }
+    }
+
+    // Do Not ask again
+    else {
+      console.debug('User not need to connect on local node. Configuring Cesium to remember this choice...');
+      settings = settings || DEFAULT_CESIUM_SETTINGS;
+      settings.askLocalNodeKeyring = false;
+      window.localStorage.setItem('settings', JSON.stringify(settings));
+    }
+  }
+
 }
+
+

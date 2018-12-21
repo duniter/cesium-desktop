@@ -3,6 +3,13 @@
 TAG="$1"
 TAG_NAME="v$1"
 ARCH=`uname -m`
+
+# Folders
+ROOT=`pwd`
+DOWNLOADS="$ROOT/downloads"
+
+mkdir -p "$DOWNLOADS"
+
 # Check that the tag exists remotely
 
 if [[ -z $TAG ]]; then
@@ -19,9 +26,8 @@ if [[ -z $TAG ]]; then
   exit 1
 fi
 
-
 # Force nodejs version to 6
-if [ -d "$NVM_DIR" ]; then
+if [[ -d "$NVM_DIR" ]]; then
     . $NVM_DIR/nvm.sh
     nvm use 6
 else
@@ -30,24 +36,31 @@ else
 fi
 
 # install dep if not already done
-if [ ! -d "node_modules" ]; then
+if [[ ! -d "node_modules" ]]; then
     npm install
 fi
 
-
 echo "Checking that $TAG has been pushed to 'origin'..."
-
 REMOTE_TAG=`node scripts/exists-tag.js "$TAG_NAME" | grep -Fo "$TAG_NAME"`
-
 if [[ -z $REMOTE_TAG ]]; then
   echo "The '$TAG' tag does not exist on 'origin' repository. Use command ./new_version.sh to create a new version and use 'git push origin --tags' to share the tag."
   exit 2
 fi
 
 echo "Remote tag: $REMOTE_TAG"
-
 echo "Creating the pre-release if it does not exist..."
 ASSETS=`node ./scripts/create-release.js $REMOTE_TAG create`
+
+CESIUM_RELEASE="cesium-$REMOTE_TAG-web"
+if [[ ! -e "$DOWNLOADS/$CESIUM_RELEASE.zip" ]]; then
+    echo "Downloading Cesium web release..."
+    cd $DOWNLOADS
+    wget "https://github.com/duniter/cesium/releases/download/$REMOTE_TAG/$CESIUM_RELEASE.zip"
+    if [[ $? -ne 0 ]]; then
+        exit 2
+    fi
+    cd $ROOT
+fi
 
 
 if [[ "_$EXPECTED_ASSETS" == "_" ]]; then
@@ -55,6 +68,11 @@ if [[ "_$EXPECTED_ASSETS" == "_" ]]; then
 cesium-desktop-$REMOTE_TAG-linux-x64.tar.gz
 cesium-desktop-$REMOTE_TAG-windows-x64.exe"
 fi
+
+
+# Remove old vagrant virtual machines
+#echo 'Removing old Vagrant VM... TODO: optimize this !'
+#rm -rf ~/.vagrant.d/*
 
 for asset in $EXPECTED_ASSETS; do
   if [[ -z `echo $ASSETS | grep -F "$asset"` ]]; then
@@ -84,7 +102,24 @@ for asset in $EXPECTED_ASSETS; do
         echo "This computer cannot build this asset, required architecture is 'x86_64'. Skipping."
       fi
     fi
+
+    # OSX
+    if [[ $asset == *"osx.zip" ]]; then
+      if [[ $ARCH == "x86_64" ]]; then
+        echo "Starting OSX build..."
+        ./scripts/build.sh make win $TAG
+        OSX_PATH="$PWD/arch/osx/$asset"
+        node ./scripts/upload-release.js $REMOTE_TAG $OSX_PATH
+      else
+        echo "This computer cannot build this asset, required architecture is 'x86_64'. Skipping."
+      fi
+    fi
   fi
 done
+
+# Clean temporary files
+cd ${ROOT}
+rm ${DOWNLOADS}/cesium-*-web.zip
+rmdir downloads
 
 echo "All the binaries have been uploaded."

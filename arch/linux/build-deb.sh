@@ -2,7 +2,7 @@
 
 # NVM
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 # Prepare
 NVER=`node -v`
@@ -37,7 +37,7 @@ mkdir -p $DOWNLOADS/cesium
 
 cd "$DOWNLOADS"
 
-if [ ! -d "$DOWNLOADS/cesium_src" ]; then
+if [[ ! -d "$DOWNLOADS/cesium_src" ]]; then
   git clone https://github.com/duniter/cesium.git cesium_src
 fi
 
@@ -48,9 +48,13 @@ cd ..
 
 CESIUM_RELEASE="cesium-v$CESIUM_TAG-web"
 echo "Checking that Cesium binary has been downloaded"
-if [ ! -e "$DOWNLOADS/$CESIUM_RELEASE.zip" ]; then
-echo "Have to download it"
+if [[ ! -e "$DOWNLOADS/$CESIUM_RELEASE.zip" ]]; then
+    echo "Have to download it"
     cd cesium
+
+    echo "TODO: copy -web.zip from relative path"
+    echo " - relative path: $ROOT"
+
     wget "https://github.com/duniter/cesium/releases/download/v$CESIUM_TAG/$CESIUM_RELEASE.zip"
     unzip $CESIUM_RELEASE.zip
     rm $CESIUM_RELEASE.zip
@@ -60,7 +64,7 @@ fi
 CESIUM_DEB_VER=" $CESIUM_TAG"
 CESIUM_TAG="v$CESIUM_TAG"
 
-if [ ! -f "$DOWNLOADS/$NW_GZ" ]; then
+if [[ ! -f "$DOWNLOADS/$NW_GZ" ]]; then
   wget https://dl.nwjs.io/${NW_RELEASE}/${NW_GZ}
   tar xvzf ${NW_GZ}
 fi
