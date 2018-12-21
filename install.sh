@@ -2,6 +2,7 @@
 
 ROOT_DIR=$PWD
 TEMP_DIR=$PWD/tmp
+NV_VERSION=0.35.2
 
 # Check first arguments = version
 if [[ $1 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ ]];
@@ -28,11 +29,11 @@ mkdir -p $TEMP_DIR && cd $TEMP_DIR
 # Install NW.js
 if [[ ! -f $ROOT_DIR/src/nw/nw ]];
 then
-  wget http://dl.nwjs.io/v0.22.3/nwjs-sdk-v0.22.3-linux-x64.tar.gz
-  tar xvzf nwjs-sdk-v0.22.3-linux-x64.tar.gz
-  mv nwjs-sdk-v0.22.3-linux-x64/* "$ROOT_DIR/src/nw"
-  rm nwjs-sdk-v0.22.3-linux-x64.tar.gz
-  rmdir nwjs-sdk-v0.22.3-linux-x64
+  wget http://dl.nwjs.io/v${NV_VERSION}/nwjs-sdk-v${NV_VERSION}-linux-x64.tar.gz
+  tar xvzf nwjs-sdk-v${NV_VERSION}-linux-x64.tar.gz
+  mv nwjs-sdk-v${NV_VERSION}-linux-x64/* "$ROOT_DIR/src/nw"
+  rm nwjs-sdk-v${NV_VERSION}-linux-x64.tar.gz
+  rmdir nwjs-sdk-v${NV_VERSION}-linux-x64
   rmdir nw
 fi
 
