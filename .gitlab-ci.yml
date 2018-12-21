@@ -1,5 +1,5 @@
 stages:
-  - builds
+#  - builds
 
 buildWindows:
   stage: builds
@@ -18,6 +18,8 @@ buildWindows:
     paths:
     - arch/windows
     expire_in: 60 minutes
+  only:
+  - tags
 
 test:
     stage: builds
@@ -27,6 +29,9 @@ test:
         - shell
     script:
         - touch ceFichierNExistaitPasAvant
+    only:
+      - tags
+
 test2:
   stage: builds
   image: jencryzthers/vboxinsidedocker
@@ -39,4 +44,6 @@ test2:
     - apt-get install -y linux-headers-generic linux-headers-4.4.0-137-generic
     - /sbin/vboxconfig
     - vboxheadless
+  only:
+    - tags
 
