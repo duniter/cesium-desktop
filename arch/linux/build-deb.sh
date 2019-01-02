@@ -8,9 +8,9 @@ export NVM_DIR="$HOME/.nvm"
 NVER=`node -v`
 CESIUM_TAG=
 ADDON_VERSION=48
-NW_VERSION=0.35.2
+NW_VERSION=0.35.3
 NW_RELEASE="v${NW_VERSION}"
-NW="nwjs-${NW_RELEASE}-linux-x64"
+NW="nwjs-sdk-${NW_RELEASE}-linux-x64"
 NW_GZ="${NW}.tar.gz"
 
 # Folders

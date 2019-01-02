@@ -12,7 +12,7 @@ make)
       [[ $? -eq 0 ]] && cp ../../src/nw/yarn.lock ./
       [[ $? -eq 0 ]] && cp ../../src/nw/package.json ./
       [[ $? -eq 0 ]] && cp ../../src/nw/cesium/node.js ./
-      [[ $? -eq 0 ]] && cp "../../downloads/cesium-v$TAG-web.zip" ./
+      #[[ $? -eq 0 ]] && cp "../../downloads/cesium-v$TAG-web.zip" ./
       [[ $? -eq 0 ]] && echo ">> Starting Vagrant Ubuntu VM..."
       [[ $? -eq 0 ]] && vagrant up
       [[ $? -eq 0 ]] && echo ">> VM: building Cesium..."

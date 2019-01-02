@@ -2,7 +2,7 @@
 
 ROOT_DIR=$PWD
 TEMP_DIR=$PWD/tmp
-NV_VERSION=0.35.2
+NV_VERSION=0.35.3
 CHROMIUM_MAJOR_VERSION=71
 CESIUM_DEFAULT_VERSION=1.2.9
 
@@ -26,22 +26,38 @@ else
   fi
 fi
 
+# Force nodejs version to 6
+if [[ -d "$NVM_DIR" ]]; then
+    . $NVM_DIR/nvm.sh
+    nvm use 6
+else
+    echo "nvm (Node version manager) not found (directory NVM_DIR not defined). Please install nvm, and retry"
+    exit -1
+fi
+
 mkdir -p $TEMP_DIR && cd $TEMP_DIR
 
 
 # Install NW.js
 if [[ ! -f $ROOT_DIR/src/nw/nw ]];
 then
-  wget http://dl.nwjs.io/v${NV_VERSION}/nwjs-sdk-v${NV_VERSION}-linux-x64.tar.gz
-  tar xvzf nwjs-sdk-v${NV_VERSION}-linux-x64.tar.gz
-  mv nwjs-sdk-v${NV_VERSION}-linux-x64/* "$ROOT_DIR/src/nw"
-  rm nwjs-sdk-v${NV_VERSION}-linux-x64.tar.gz
-  rmdir nwjs-sdk-v${NV_VERSION}-linux-x64
+  #NV_BASENAME=nwjs
+  NV_BASENAME=nwjs-sdk
+  wget http://dl.nwjs.io/v${NV_VERSION}/${NV_BASENAME}-v${NV_VERSION}-linux-x64.tar.gz
+  tar xvzf ${NV_BASENAME}-v${NV_VERSION}-linux-x64.tar.gz
+  mv ${NV_BASENAME}-v${NV_VERSION}-linux-x64/* "$ROOT_DIR/src/nw"
+  rm ${NV_BASENAME}-v${NV_VERSION}-linux-x64.tar.gz
+  rmdir ${NV_BASENAME}-v${NV_VERSION}-linux-x64
   rmdir nw
+
+  cd $ROOT_DIR/src/nw
+  npm install
 
 # Check NW version
 else
   cd ${ROOT_DIR}/src/nw
+  npm install
+
   NW_ACTUAL_VERSION=`./nw --version | grep nwjs | awk '{print $2}'`
   echo "Using Chromium version: ${NW_ACTUAL_VERSION}"
   CHROMIUM_ACTUAL_MAJOR_VERSION=`echo ${NW_ACTUAL_VERSION} | awk '{split($0, array, ".")} END{print array[1]}'`
