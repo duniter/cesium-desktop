@@ -12,9 +12,10 @@ const path = requireNodejs('path')
 const yaml = requireNodejs('js-yaml')
 const bs58 = requireNodejs('bs58')
 const gui = requireNodejs('nw.gui');
+const clc = requireNodejs('cli-color');
 
 Base58 = {
-  encode: (bytes) => bs58.encode(bytes),
+  encode: (bytes) => bs58.encode(new Buffer(bytes)),
   decode: (data) => new Uint8Array(bs58.decode(data))
 }
 
@@ -25,10 +26,6 @@ const CESIUM_KEYRING = path.resolve(CESIUM_HOME, 'keyring.yml')
 const DUNITER_HOME = path.resolve(HOME, '.config/duniter/duniter_default')
 const DUNITER_CONF = path.resolve(DUNITER_HOME, 'conf.json')
 const DUNITER_KEYRING = path.resolve(DUNITER_HOME, 'keyring.yml')
-
-let keyringRaw,keyring, keyPairOK;
-console.info("[NW] Starting. User home is {" + HOME + "}");
-
 const DEFAULT_CESIUM_SETTINGS = {
   "useRelative": false,
   "timeWarningExpire": 2592000,
@@ -55,21 +52,66 @@ const DEFAULT_CESIUM_SETTINGS = {
   },
   "showUDHistory": true
 };
-let settingsStr = window.localStorage.getItem('settings');
-let settings = (settingsStr && JSON.parse(settingsStr));
-let pubkey = settings && window.localStorage.getItem('pubkey');
+
 
 /**** Process command line args ****/
-
 var commands = gui && gui.App && gui.App.argv;
+var debug = false;
 if (commands && commands.length) {
   for (i in commands) {
     if (commands[i] === "--debug") {
       console.log("[NW] Enabling DEV tool (--debug)");
-      gui.Window.get().showDevTools()
+      debug = true;
+      gui.Window.get().showDevTools();
     }
   }
 }
+
+/**** Re-routing console log ****/
+var oldConsole = {
+  log: console.log,
+  debug: console.debug,
+  info: console.info,
+  warn: console.warn,
+  error: console.error,
+}
+if (debug) {
+  console.debug = function (message) {
+    process.stdout.write(clc.green("[DEBUG] ") + message + "\n");
+    oldConsole.debug.apply(this, arguments);
+  };
+  console.log = function(message) {
+    process.stdout.write(clc.blue("[CONSOLE] ") + message + "\n");
+    oldConsole.log.apply(this, arguments);
+  }
+}
+console.info = function(message) {
+  process.stdout.write(clc.blue("[INFO]  ") + message + "\n");
+  oldConsole.info.apply(this, arguments);
+};
+console.warn = function(message) {
+  process.stdout.write(clc.yellow("[WARN]  ") + message + "\n");
+  oldConsole.warn.apply(this, arguments);
+};
+console.error = function(message) {
+  if (typeof message == "object") {
+    process.stderr.write(clc.red("[ERROR] ") + JSON.stringify(message) + "\n");
+  }
+  else {
+    process.stderr.write(clc.red("[ERROR] ") + message + "\n");
+  }
+  oldConsole.error.apply(this, arguments);
+};
+
+
+/**** Starting ****/
+let keyringRaw,keyring, keyPairOK;
+let settingsStr = window.localStorage.getItem('settings');
+let settings = (settingsStr && JSON.parse(settingsStr));
+let pubkey = settings && window.localStorage.getItem('pubkey');
+
+console.info("[NW] Starting. User home is {" + HOME + "}");
+
 
 /**** Checking Cesium keyring file ****/
 var rememberMe = (!settings && DEFAULT_CESIUM_SETTINGS.rememberMe) || settings.rememberMe == true;

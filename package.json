@@ -1,8 +1,10 @@
 {
+  "license": "AGPL-3.0",
   "dependencies": {
     "bs58": "^4.0.1",
     "co": "^4.6.0",
     "js-yaml": "^3.8.4",
+    "cli-color": "^1.4.0",
     "request": "^2.81.0",
     "request-promise": "^4.2.1"
   }
