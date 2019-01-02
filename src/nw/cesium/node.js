@@ -1,4 +1,3 @@
-
 // Rename "require" to avoid conflicts with pure JS libraries
 requireNodejs = require
 require = undefined
@@ -11,8 +10,8 @@ const fs = requireNodejs('fs')
 const path = requireNodejs('path')
 const yaml = requireNodejs('js-yaml')
 const bs58 = requireNodejs('bs58')
-const gui = requireNodejs('nw.gui');
 const clc = requireNodejs('cli-color');
+const gui = requireNodejs('nw.gui');
 
 Base58 = {
   encode: (bytes) => bs58.encode(new Buffer(bytes)),
@@ -53,6 +52,9 @@ const DEFAULT_CESIUM_SETTINGS = {
   "showUDHistory": true
 };
 
+function isSdkMode () {
+  return gui && (window.navigator.plugins.namedItem('Native Client') !== null);
+}
 
 /**** Process command line args ****/
 var commands = gui && gui.App && gui.App.argv;
@@ -60,9 +62,13 @@ var debug = false;
 if (commands && commands.length) {
   for (i in commands) {
     if (commands[i] === "--debug") {
-      console.log("[NW] Enabling DEV tool (--debug)");
+      console.log("[NW] Enabling debug mode (--debug)");
       debug = true;
-      gui.Window.get().showDevTools();
+
+      // Open the DEV tool (need a SDK version of NW)
+      if (isSdkMode()) {
+        gui.Window.get().showDevTools();
+      }
     }
   }
 }
