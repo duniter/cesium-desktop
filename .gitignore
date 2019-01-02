@@ -52,3 +52,5 @@ src/nw/swiftshader/libEGL.so
 src/nw/swiftshader/libGLESv2.so
 
 downloads
+
+src/nw/yarn.lock
