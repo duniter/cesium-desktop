@@ -25,6 +25,7 @@ sed -i 's/Cesium/Cesium Ğ1-Test/g' cesium/debug.html
 sed -i 's/g1.duniter/g1-test.duniter/g' cesium/config.js
 sed -i 's/g1.data/g1-test.data/g' cesium/config.js
 sed -i 's/"g1"/"g1-test"/g' cesium/node.js
+sed -i 's/.config\/cesium\//.config\/cesium-g1-test\//g' cesium/node.js
 
 # Change title of Cesium classic
 cd "$CESIUM_ROOT/nw/"

@@ -49,11 +49,8 @@ cd ..
 CESIUM_RELEASE="cesium-v$CESIUM_TAG-web"
 echo "Checking that Cesium binary has been downloaded"
 if [[ ! -e "$DOWNLOADS/$CESIUM_RELEASE.zip" ]]; then
-    echo "Have to download it"
+    echo "Have to download it into ${DOWNLOADS}"
     cd cesium
-
-    echo "TODO: copy -web.zip from relative path"
-    echo " - relative path: $ROOT"
 
     wget "https://github.com/duniter/cesium/releases/download/v$CESIUM_TAG/$CESIUM_RELEASE.zip"
     unzip $CESIUM_RELEASE.zip

@@ -1,4 +1,3 @@
-// require('nw.gui').Window.get().showDevTools()
 
 // Rename "require" to avoid conflicts with pure JS libraries
 requireNodejs = require
@@ -12,6 +11,7 @@ const fs = requireNodejs('fs')
 const path = requireNodejs('path')
 const yaml = requireNodejs('js-yaml')
 const bs58 = requireNodejs('bs58')
+const gui = requireNodejs('nw.gui');
 
 Base58 = {
   encode: (bytes) => bs58.encode(bytes),
@@ -20,14 +20,14 @@ Base58 = {
 
 /**** Program ****/
 const HOME = requireNodejs('os').homedir()
-const CESIUM_HOME = path.resolve(HOME, '.config/cesium/' + expectedCurrency)
+const CESIUM_HOME = path.resolve(HOME, '.config/cesium/')
 const CESIUM_KEYRING = path.resolve(CESIUM_HOME, 'keyring.yml')
 const DUNITER_HOME = path.resolve(HOME, '.config/duniter/duniter_default')
 const DUNITER_CONF = path.resolve(DUNITER_HOME, 'conf.json')
 const DUNITER_KEYRING = path.resolve(DUNITER_HOME, 'keyring.yml')
 
 let keyringRaw,keyring, keyPairOK;
-console.log('User home = ', HOME);
+console.info("[NW] Starting. User home is {" + HOME + "}");
 
 const DEFAULT_CESIUM_SETTINGS = {
   "useRelative": false,
@@ -59,25 +59,61 @@ let settingsStr = window.localStorage.getItem('settings');
 let settings = (settingsStr && JSON.parse(settingsStr));
 let pubkey = settings && window.localStorage.getItem('pubkey');
 
+/**** Process command line args ****/
+
+var commands = gui && gui.App && gui.App.argv;
+if (commands && commands.length) {
+  for (i in commands) {
+    if (commands[i] === "--debug") {
+      console.log("[NW] Enabling DEV tool (--debug)");
+      gui.Window.get().showDevTools()
+    }
+  }
+}
 
 /**** Checking Cesium keyring file ****/
+var rememberMe = (!settings && DEFAULT_CESIUM_SETTINGS.rememberMe) || settings.rememberMe == true;
+var keyringFile = settings && settings.keyringFile || CESIUM_KEYRING;
+if (rememberMe && fs.existsSync(keyringFile)) {
+  console.debug("[NW] Keyring file detected at {" + keyringFile + "}...");
 
-if (fs.existsSync(CESIUM_KEYRING)) {
-  keyringRaw = fs.readFileSync(CESIUM_KEYRING);
+  keyringRaw = fs.readFileSync(keyringFile);
   keyring = yaml.safeLoad(keyringRaw);
 
-  keyPairOK = !keyring.pub || !keyring.sec;
+  keyPairOK = keyring.pub && keyring.sec && true;
   if (!keyPairOK) {
-    console.log('Invalid Cesium keyring file at ' + CESIUM_KEYRING + '. Skipping.');
+    console.warn("[NW] Invalid keyring file: missing 'pub' or 'sec' field! Skipping auto-login.");
+    // Store settings
+    settings = settings || DEFAULT_CESIUM_SETTINGS;
+    if (settings.keyringFile) {
+      delete settings.keyringFile;
+      window.localStorage.setItem('settings', JSON.stringify(settings));
+    }
   }
   else {
-    console.log('Cesium keyring pubkey=', keyring.pub);
+    console.debug("[NW] Auto-login user on {" +  keyring.pub + "}");
     window.localStorage.setItem('pubkey', keyring.pub);
-    const keepAuthSession = settings && (settings.keepAuthIdle == 9999);
+    const keepAuthSession = !settings || (settings.keepAuthIdle == 9999);
     if (keepAuthSession) {
-      console.debug('Configuring Cesium secret key...');
+      console.debug("[NW] Auto-authenticate on account (using keyring file)");
       window.sessionStorage.setItem('seckey', keyring.sec);
     }
+
+    // Store settings
+    settings = settings || DEFAULT_CESIUM_SETTINGS;
+    if (!settings.keyringFile || settings.keyringFile != keyringFile) {
+      settings.keyringFile = keyringFile;
+      window.localStorage.setItem('settings', JSON.stringify(settings));
+    }
+  }
+}
+else if (settings && settings.keyringFile) {
+  console.warn("[NW] Unable to found keyring file define in Cesium settings. Skipping auto-login");
+  // Store settings
+  settings = settings || DEFAULT_CESIUM_SETTINGS;
+  if (settings.keyringFile) {
+    delete settings.keyringFile;
+    window.localStorage.setItem('settings', JSON.stringify(settings));
   }
 }
 
@@ -173,5 +209,4 @@ if (!keyPairOK && fs.existsSync(DUNITER_CONF) && fs.existsSync(DUNITER_KEYRING))
   }
 
 }
-
 
