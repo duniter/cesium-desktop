@@ -51,12 +51,12 @@ then
   rmdir nw
 
   cd $ROOT_DIR/src/nw
-  npm install
+  yarn
 
 # Check NW version
 else
   cd ${ROOT_DIR}/src/nw
-  npm install
+  yarn
 
   NW_ACTUAL_VERSION=`./nw --version | grep nwjs | awk '{print $2}'`
   echo "Using Chromium version: ${NW_ACTUAL_VERSION}"

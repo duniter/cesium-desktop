@@ -4,7 +4,6 @@ Section: misc
 Priority: optional
 Architecture: all
 Installed-Size: 235351
-License: AGPL-3+
 Maintainer: Duniter team
 Description: Cesium Wallet for &#x011E;1 currency
  Cesium is a wallet (client-software) for &#x011E;1, a libre currency.
