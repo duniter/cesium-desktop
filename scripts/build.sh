@@ -36,6 +36,8 @@ make)
       [[ $? -eq 0 ]] && cp ../../src/nw/package.json ./
       [[ $? -eq 0 ]] && cp ../../src/nw/LICENSE.txt ./
       [[ $? -eq 0 ]] && cp ../../src/nw/cesium/node.js ./
+      # Win build need a copy iof the web asset, because build.bat has error while download from PowerShell
+      [[ $? -eq 0 ]] && cp "../../downloads/cesium-v$TAG-web.zip" ./
       if [[ $? -eq 0 && ! -f ./duniter_win7.box ]]; then
         echo ">> Downloading Windows VM..."
         wget -kL https://s3.eu-central-1.amazonaws.com/duniter/vagrant/duniter_win7.box

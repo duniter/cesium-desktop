@@ -4,7 +4,7 @@ Section: misc
 Priority: optional
 Architecture: all
 Installed-Size: 235351
-Maintainer: E-IS Team <contact@e-is.pro>
+Maintainer: Duniter Team <contact@duniter.org>
 Description: Cesium Wallet for &#x011E;1 currency
  Cesium is a wallet (client-software) for &#x011E;1, a libre currency.
  Please visit https://www.duniter.org for more information on &#x011E;1 and libre currencies.

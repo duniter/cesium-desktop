@@ -55,16 +55,16 @@ echo "Creating the pre-release if it does not exist..."
 ASSETS=`node ./scripts/create-release.js $REMOTE_TAG create`
 
 # Downloading web assets (once)
-#CESIUM_RELEASE="cesium-$REMOTE_TAG-web"
-#if [[ ! -f "${DOWNLOADS}/${CESIUM_RELEASE}.zip" ]]; then
-#    echo "Downloading Cesium web release..."
-#    cd $DOWNLOADS
-#    wget "https://github.com/duniter/cesium/releases/download/$REMOTE_TAG/$CESIUM_RELEASE.zip"
-#    if [[ $? -ne 0 ]]; then
-#        exit 2
-#    fi
-#    cd $ROOT
-#fi
+CESIUM_RELEASE="cesium-$REMOTE_TAG-web"
+if [[ ! -f "${DOWNLOADS}/${CESIUM_RELEASE}.zip" ]]; then
+    echo "Downloading Cesium web release..."
+    mkdir -p && ${DOWNLOADS} && cd ${DOWNLOADS}
+    wget "https://github.com/duniter/cesium/releases/download/$REMOTE_TAG/$CESIUM_RELEASE.zip"
+    if [[ $? -ne 0 ]]; then
+        exit 2
+    fi
+    cd $ROOT
+fi
 
 
 if [[ "_$EXPECTED_ASSETS" == "_" ]]; then
