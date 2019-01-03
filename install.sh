@@ -2,7 +2,8 @@
 
 ROOT_DIR=$PWD
 TEMP_DIR=$PWD/tmp
-NV_VERSION=0.35.3
+NW_VERSION=0.35.3
+NW_BASENAME=nwjs-sdk
 CHROMIUM_MAJOR_VERSION=71
 CESIUM_DEFAULT_VERSION=1.2.9
 
@@ -41,23 +42,17 @@ mkdir -p $TEMP_DIR && cd $TEMP_DIR
 # Install NW.js
 if [[ ! -f $ROOT_DIR/src/nw/nw ]];
 then
-  #NV_BASENAME=nwjs
-  NV_BASENAME=nwjs-sdk
-  wget http://dl.nwjs.io/v${NV_VERSION}/${NV_BASENAME}-v${NV_VERSION}-linux-x64.tar.gz
-  tar xvzf ${NV_BASENAME}-v${NV_VERSION}-linux-x64.tar.gz
-  mv ${NV_BASENAME}-v${NV_VERSION}-linux-x64/* "$ROOT_DIR/src/nw"
-  rm ${NV_BASENAME}-v${NV_VERSION}-linux-x64.tar.gz
-  rmdir ${NV_BASENAME}-v${NV_VERSION}-linux-x64
+  cd ${TEMP_DIR}
+  wget http://dl.nwjs.io/v${NW_VERSION}/${NW_BASENAME}-v${NW_VERSION}-linux-x64.tar.gz
+  tar xvzf ${NW_BASENAME}-v${NW_VERSION}-linux-x64.tar.gz
+  mv ${NW_BASENAME}-v${NW_VERSION}-linux-x64/* "$ROOT_DIR/src/nw"
+  rm ${NW_BASENAME}-v${NW_VERSION}-linux-x64.tar.gz
+  rmdir ${NW_BASENAME}-v${NW_VERSION}-linux-x64
   rmdir nw
-
-  cd $ROOT_DIR/src/nw
-  yarn
 
 # Check NW version
 else
   cd ${ROOT_DIR}/src/nw
-  yarn
-
   NW_ACTUAL_VERSION=`./nw --version | grep nwjs | awk '{print $2}'`
   echo "Using Chromium version: ${NW_ACTUAL_VERSION}"
   CHROMIUM_ACTUAL_MAJOR_VERSION=`echo ${NW_ACTUAL_VERSION} | awk '{split($0, array, ".")} END{print array[1]}'`
@@ -67,6 +62,10 @@ else
     exit -1
   fi
 fi
+
+# Instal deps
+cd ${ROOT_DIR}/src/nw
+yarn
 
 # Remove old Cesium version
 if [[ -f $ROOT_DIR/src/nw/cesium/index.html ]];
@@ -88,7 +87,7 @@ fi
 if [[ ! -f $ROOT_DIR/src/nw/cesium/index.html ]]; then
     echo "Downloading Cesium ${VERSION}..."
 
-    mkdir -p ${TEMP_DIR}/cesium_unzip
+    mkdir -p ${TEMP_DIR}/cesium_unzip && cd ${TEMP_DIR}/cesium_unzip
     wget "https://github.com/duniter/cesium/releases/download/v${VERSION}/cesium-v${VERSION}-web.zip"
     if [[ ! $? -eq 0 ]]; then
         echo "Could not download Cesium web release !"

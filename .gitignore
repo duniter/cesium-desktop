@@ -37,6 +37,7 @@ arch/windows/yarn*
 arch/windows/ubuntu*
 arch/windows/nw*
 arch/windows/LICENSE.txt
+arch/windows/*.box
 
 arch/osx/.vagrant
 
@@ -53,3 +54,5 @@ src/nw/swiftshader/libGLESv2.so
 downloads
 
 src/nw/yarn.lock
+
+arch/windows/.directory

@@ -12,7 +12,6 @@ make)
       [[ $? -eq 0 ]] && cp ../../src/nw/yarn.lock ./
       [[ $? -eq 0 ]] && cp ../../src/nw/package.json ./
       [[ $? -eq 0 ]] && cp ../../src/nw/cesium/node.js ./
-      #[[ $? -eq 0 ]] && cp "../../downloads/cesium-v$TAG-web.zip" ./
       [[ $? -eq 0 ]] && echo ">> Starting Vagrant Ubuntu VM..."
       [[ $? -eq 0 ]] && vagrant up
       [[ $? -eq 0 ]] && echo ">> VM: building Cesium..."
@@ -37,12 +36,15 @@ make)
       [[ $? -eq 0 ]] && cp ../../src/nw/package.json ./
       [[ $? -eq 0 ]] && cp ../../src/nw/LICENSE.txt ./
       [[ $? -eq 0 ]] && cp ../../src/nw/cesium/node.js ./
-      [[ $? -eq 0 ]] && cp "../../downloads/cesium-v$TAG-web.zip" ./
+      if [[ $? -eq 0 && ! -f ./duniter_win7.box ]]; then
+        echo ">> Downloading Windows VM..."
+        wget -kL https://s3.eu-central-1.amazonaws.com/duniter/vagrant/duniter_win7.box
+      fi
       [[ $? -eq 0 ]] && echo ">> Starting Vagrant Windows VM..."
       [[ $? -eq 0 ]] && vagrant up
-      if [[ ! $? -eq 0 ]]; then
+      if [[ $? -ne 0 ]]; then
         echo ">> Something went wrong. Stopping build."
-        exit -1;
+        exit 2;
       fi
       vagrant halt
       echo ">> VM closed."
