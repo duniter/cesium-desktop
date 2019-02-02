@@ -115,7 +115,7 @@ for asset in $EXPECTED_ASSETS; do
     if [[ $asset == *"osx.zip" ]]; then
       if [[ $ARCH == "x86_64" ]]; then
         echo "Starting OSX build..."
-        ./scripts/build.sh make win $TAG
+        ./scripts/build.sh make osx $TAG
         OSX_PATH="$PWD/arch/osx/$asset"
         if [[ -f "${OSX_PATH}" ]]; then
           node ./scripts/upload-release.js ${REMOTE_TAG} ${OSX_PATH}
