@@ -40,6 +40,8 @@ arch/windows/LICENSE.txt
 arch/windows/*.box
 
 arch/osx/.vagrant
+arch/osx/*.xip
+arch/osx/yarn*
 
 .idea/
 
@@ -51,8 +53,10 @@ package-lock.json
 src/nw/swiftshader/libEGL.so
 src/nw/swiftshader/libGLESv2.so
 
-downloads
 
 src/nw/yarn.lock
 
 arch/windows/.directory
+
+downloads
+cesium-*.zip
