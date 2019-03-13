@@ -58,7 +58,7 @@ ASSETS=`node ./scripts/create-release.js $REMOTE_TAG create`
 CESIUM_RELEASE="cesium-$REMOTE_TAG-web"
 if [[ ! -f "${DOWNLOADS}/${CESIUM_RELEASE}.zip" ]]; then
     echo "Downloading Cesium web release..."
-    mkdir -p && ${DOWNLOADS} && cd ${DOWNLOADS}
+    mkdir -p ${DOWNLOADS} && cd ${DOWNLOADS}
     wget "https://github.com/duniter/cesium/releases/download/$REMOTE_TAG/$CESIUM_RELEASE.zip"
     if [[ $? -ne 0 ]]; then
         exit 2
@@ -89,7 +89,7 @@ for asset in $EXPECTED_ASSETS; do
         echo "Starting Debian build..."
         ./scripts/build.sh make linux $TAG
         DEB_PATH="$PWD/arch/linux/$asset"
-        if [[ -f "${DEB_PATH}" ]]; then
+        if [[ $? -eq 0 ]] && [[ -f "${DEB_PATH}" ]]; then
           node ./scripts/upload-release.js ${REMOTE_TAG} ${DEB_PATH}
         fi
       else
@@ -127,13 +127,15 @@ for asset in $EXPECTED_ASSETS; do
   fi
 done
 
-cd ${ROOT}
-
-# Clean temporary files
 if [[ $? -eq 0 ]]; then
-  rm ${DOWNLOADS}/cesium-*-web.zip
-  rmdir downloads
+  cd ${ROOT}
 
-  echo "All the binaries have been uploaded."
+  # Clean temporary files
+  if [[ $? -eq 0 ]]; then
+    rm ${DOWNLOADS}/cesium-*-web.zip
+    rmdir downloads
+
+    echo "All the binaries have been uploaded."
+  fi
+
 fi
-
