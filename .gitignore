@@ -38,8 +38,12 @@ arch/windows/ubuntu*
 arch/windows/nw*
 arch/windows/LICENSE.txt
 arch/windows/*.box
+arch/windows/.directory
 
 arch/osx/.vagrant
+arch/osx/Xcode*.xip
+arch/osx/cesium-*-web.zip
+arch/osx/yarn.lock
 
 .idea/
 
@@ -54,5 +58,3 @@ src/nw/swiftshader/libGLESv2.so
 downloads
 
 src/nw/yarn.lock
-
-arch/windows/.directory
