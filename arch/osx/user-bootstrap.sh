@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Install Homebrew - see http://macappstore.org/nvm/
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
+
+# System tools
+brew update
+brew install nvm yarn git zip
+
+brew install thii/unxip/unxip
 
 mkdir -p $HOME/.nvm
 export NVM_DIR="$HOME/.nvm"

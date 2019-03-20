@@ -63,7 +63,7 @@ make)
       # OSx need a copy of the web asset  (download in build-osx.sh failed)
       [[ $? -eq 0 ]] && cp "../../downloads/cesium-v$TAG-web.zip" ./
       [[ $? -eq 0 ]] && echo ">> Starting Vagrant OSx VM..."
-      [[ $? -eq 0 ]] && vagrant up
+      [[ $? -eq 0 ]] && vagrant up --provision
       [[ $? -eq 0 ]] && echo ">> VM: building Cesium..."
       [[ $? -eq 0 ]] && vagrant ssh -- 'bash -s' < ./build-osx.sh
       if [[ ! $? -eq 0 ]]; then
