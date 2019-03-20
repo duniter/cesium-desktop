@@ -41,9 +41,9 @@ arch/windows/*.box
 arch/windows/.directory
 
 arch/osx/.vagrant
-arch/osx/Xcode*.xip
+arch/osx/*.xip
 arch/osx/cesium-*-web.zip
-arch/osx/yarn.lock
+arch/osx/yarn.*
 
 .idea/
 
@@ -55,6 +55,6 @@ package-lock.json
 src/nw/swiftshader/libEGL.so
 src/nw/swiftshader/libGLESv2.so
 
-downloads
-
 src/nw/yarn.lock
+
+downloads

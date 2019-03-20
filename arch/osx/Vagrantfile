@@ -3,13 +3,17 @@
 
 Vagrant.configure("2") do |config|
   config.vm.box = "jhcook/osx-elcapitan-10.11"
-  #config.vm.provision :shell, path: "bootstrap.sh"
+  config.vm.provision :shell, path: "bootstrap.sh"
+
+  config.vm.synced_folder ".", "/vagrant", type: "rsync", owner: "vagrant", group: "wheel"
 
   config.vm.provider "virtualbox" do |vb|
-    vb.memory = "2048"
-  end
-end
+    #vb.memory = "2048"
+    vb.memory = "8192"
 
-#TODO :
-# Get this error: VBoxManage: error: Implementation of the USB 2.0 controller not found!
-# https://askubuntu.com/questions/453393/virtualbox-fails-with-implementation-of-the-usb-2-0-controller-not-found-after
+    # otherwise osx fails, if Virtualbox Oracle extension pack has not been installed
+    #vb.customize ["modifyvm", :id, "--usb", "off"]
+    #vb.customize ["modifyvm", :id, "--usbehci", "off"]
+  end
+
+end

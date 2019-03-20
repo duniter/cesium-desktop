@@ -1,12 +1,18 @@
 #!/bin/bash
 
-# Yarn
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+# Create a group 'vagrant'
+dscl . append /Users/vagrant GroupMembership vagrant
+
+# Install Homebrew - see http://macappstore.org/nvm/
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
 
 # System tools
-apt-get update
-apt-get install --yes git curl yarn python-minimal zip
+brew update
+brew install nvm yarn git zip
+
+brew install thii/unxip/unxip
+
 
 # User installation
 sudo su vagrant -c "bash /vagrant/user-bootstrap.sh"
+

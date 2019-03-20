@@ -36,7 +36,7 @@ make)
       [[ $? -eq 0 ]] && cp ../../src/nw/package.json ./
       [[ $? -eq 0 ]] && cp ../../src/nw/LICENSE.txt ./
       [[ $? -eq 0 ]] && cp ../../src/nw/cesium/node.js ./
-      # Win build need a copy iof the web asset, because build.bat has error while download from PowerShell
+      # Win build need a copy of the web asset (download in build.bat failed)
       [[ $? -eq 0 ]] && cp "../../downloads/cesium-v$TAG-web.zip" ./
       if [[ $? -eq 0 && ! -f ./duniter_win7.box ]]; then
         echo ">> Downloading Windows VM..."
@@ -61,6 +61,8 @@ make)
       [[ $? -eq 0 ]] && cp ../../src/nw/yarn.lock ./
       [[ $? -eq 0 ]] && cp ../../src/nw/package.json ./
       [[ $? -eq 0 ]] && cp ../../src/nw/cesium/node.js ./
+      # OSx need a copy of the web asset  (download in build-osx.sh failed)
+      [[ $? -eq 0 ]] && cp "../../downloads/cesium-v$TAG-web.zip" ./
       [[ $? -eq 0 ]] && echo ">> Starting Vagrant OSx VM..."
       [[ $? -eq 0 ]] && vagrant up
       [[ $? -eq 0 ]] && echo ">> VM: building Cesium..."
