@@ -2,14 +2,15 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  #config.vm.box = "https://s3.eu-central-1.amazonaws.com/duniter/vagrant/duniter_win7.box"
   config.vm.box = "duniter/cesium_win7"
-  config.vm.box_url = "./duniter_win7.box"
   config.vm.define "cesium-release-windows"
+
+  #config.vm.box_url = "https://s3.eu-central-1.amazonaws.com/duniter/vagrant/duniter_win7.box"
+  config.vm.box_url = "./duniter_win7.box"
 
   config.vm.provision :shell, path: "build.bat", run: 'always'
 
-   config.vm.provider "virtualbox" do |vb|
-     vb.memory = "4096"
-   end
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "4096"
+  end
 end

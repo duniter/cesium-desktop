@@ -58,7 +58,8 @@ ASSETS=`node ./scripts/create-release.js $REMOTE_TAG create`
 CESIUM_RELEASE="cesium-$REMOTE_TAG-web"
 if [[ ! -f "${DOWNLOADS}/${CESIUM_RELEASE}.zip" ]]; then
     echo "Downloading Cesium web release..."
-    mkdir -p && ${DOWNLOADS} && cd ${DOWNLOADS}
+    mkdir -p ${DOWNLOADS}
+    cd ${DOWNLOADS}
     wget "https://github.com/duniter/cesium/releases/download/$REMOTE_TAG/$CESIUM_RELEASE.zip"
     if [[ $? -ne 0 ]]; then
         exit 2
@@ -131,8 +132,8 @@ cd ${ROOT}
 
 # Clean temporary files
 if [[ $? -eq 0 ]]; then
-  rm ${DOWNLOADS}/cesium-*-web.zip
-  rmdir downloads
+  #rm ${DOWNLOADS}/cesium-*-web.zip
+  #rmdir downloads
 
   echo "All the binaries have been uploaded."
 fi

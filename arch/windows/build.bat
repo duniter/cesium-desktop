@@ -3,10 +3,7 @@ set NW_VERSION=0.35.3
 set NW_RELEASE=v%NW_VERSION%
 set NW=nwjs-%NW_RELEASE%-win-x64
 set NW_GZ=%NW%.zip
-echo %NW%
-echo %NW_GZ%
-echo %NW_RELEASE%
-node -v
+echo "NW.js %NW_VERSION%"
 
 REM NPM
 set PATH="C:\Users\vagrant\AppData\Roaming\npm";%PATH%

@@ -43,7 +43,7 @@ make)
         wget -kL https://s3.eu-central-1.amazonaws.com/duniter/vagrant/duniter_win7.box
       fi
       [[ $? -eq 0 ]] && echo ">> Starting Vagrant Windows VM..."
-      [[ $? -eq 0 ]] && vagrant up
+      [[ $? -eq 0 ]] && vagrant up --provision
       if [[ $? -ne 0 ]]; then
         echo ">> Something went wrong. Stopping build."
         exit 2;
@@ -61,7 +61,7 @@ make)
       [[ $? -eq 0 ]] && cp ../../src/nw/yarn.lock ./
       [[ $? -eq 0 ]] && cp ../../src/nw/package.json ./
       [[ $? -eq 0 ]] && cp ../../src/nw/cesium/node.js ./
-      [[ $? -eq 0 ]] && echo ">> Starting Vagrant Ubuntu VM..."
+      [[ $? -eq 0 ]] && echo ">> Starting Vagrant OSx VM..."
       [[ $? -eq 0 ]] && vagrant up
       [[ $? -eq 0 ]] && echo ">> VM: building Cesium..."
       [[ $? -eq 0 ]] && vagrant ssh -- 'bash -s' < ./build-osx.sh
