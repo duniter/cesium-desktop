@@ -31,7 +31,6 @@ make)
   win)
     cd arch/windows
     if [[ ! -f "cesium-desktop-v$TAG-windows-x64.exe" ]]; then
-      CESIUM_RELEASE="cesium-v$CESIUM_TAG-web"
       [[ $? -eq 0 ]] && echo ">> Copying Cesium Desktop sources..."
       [[ $? -eq 0 ]] && cp ../../src/nw/package.json ./
       [[ $? -eq 0 ]] && cp ../../src/nw/LICENSE.txt ./
