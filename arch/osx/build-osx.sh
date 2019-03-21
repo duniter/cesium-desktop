@@ -16,26 +16,30 @@ NW="nwjs-${NW_RELEASE}-osx-x64"
 NW_ZIP="${NW}.zip"
 
 # Folders
-ROOT=`pwd`
-DOWNLOADS="$ROOT/Downloads"
-RELEASES="$ROOT/releases"
+DOWNLOADS="$HOME/Downloads"
+RELEASES="$HOME/releases"
 
 mkdir -p "${DOWNLOADS}"
 
 # -----------
-# Clean sources and binaries
+# Downloads sources
 # -----------
-rm -rf "${DOWNLOADS}/cesium"
-rm -rf "${DOWNLOADS}/cesium_src"
 
-# -----------
-# Downloads sources and binaries
-# -----------
+# Remove old sources
+#rm -rf "${DOWNLOADS}/cesium_src"
+
 # Get Cesium sources (from git)
-if [[ ! -d "$DOWNLOADS/cesium_src" ]]; then
+if [[ ! -d "${DOWNLOADS}/cesium_src" ]]; then
   echo "Downloading Cesium sources into ${DOWNLOADS}/cesium_src ..."
   mkdir -p ${DOWNLOADS} && cd ${DOWNLOADS}
   git clone https://github.com/duniter/cesium.git cesium_src
+  if [[ $? -ne 0 ]]; then exit 2; fi
+else
+  echo "Updating sources in ${DOWNLOADS}/cesium_src ..."
+  cd ${DOWNLOADS}/cesium_src
+  git fetch
+  git checkout origin/master
+  if [[ $? -ne 0 ]]; then exit 2; fi
 fi
 
 # Read the release tag from source
@@ -48,6 +52,13 @@ fi
 cd ${DOWNLOADS}/cesium_src
 COMMIT=`git rev-list --tags --max-count=1`
 CESIUM_TAG=`echo $(git describe --tags $COMMIT) | sed 's/^v//'`
+
+# -----------
+# Downloads binaries
+# -----------
+
+# Remove old binaries
+rm -rf "${DOWNLOADS}/cesium"
 
 # Get Cesium binaries
 if [[ ! -f "${DOWNLOADS}/cesium/index.html" ]]; then
@@ -79,7 +90,7 @@ fi
 # Releases
 # -----------
 
-# Remove old release
+# Remove old releases
 rm -rf ${RELEASES}
 mkdir -p ${RELEASES}
 rm -rf /vagrant/cesium-*-osx-x64.zip
@@ -90,41 +101,36 @@ rm -rf /vagrant/cesium-*-osx-x64.zip
 
 ## Install Nw.js
 cp -r ${DOWNLOADS}/${NW}/* ${RELEASES}/
-cp -r ${DOWNLOADS}/cesium ${RELEASES}/nwjs.app/Contents/Resources/cesium
+mkdir -p ${RELEASES}/nwjs.app/Contents/Resources/app.nw/cesium
+cp -r ${DOWNLOADS}/cesium/* ${RELEASES}/nwjs.app/Contents/Resources/app.nw/cesium/
 
 # Specific desktop files
-cp -r /vagrant/package.json ${RELEASES}/nwjs.app/Contents/Resources/
-cp -r /vagrant/yarn.lock ${RELEASES}/nwjs.app/Contents/Resources/
-cp -r /vagrant/node.js ${RELEASES}/nwjs.app/Contents/Resources/cesium
+cp -f /vagrant/package.json ${RELEASES}/nwjs.app/Contents/Resources/app.nw/
+cp -f /vagrant/yarn.lock ${RELEASES}/nwjs.app/Contents/Resources/app.nw/
+cp -f /vagrant/node.js ${RELEASES}/nwjs.app/Contents/Resources/app.nw/cesium
+cp -rf /vagrant/package/* ${RELEASES}/nwjs.app
 
 # Inject 'node.js' script (in index.html)
-cd ${RELEASES}/nwjs.app/Contents/Resources/cesium
+cd ${RELEASES}/nwjs.app/Contents/Resources/app.nw/cesium
 cat index.html | sed -E 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' > index2.html
 rm index.html && mv index2.html index.html
-if [[ $? -ne 0 ]]; then
-  exit 2;
-fi
+if [[ $? -ne 0 ]]; then exit 2; fi
 
 # Inject 'node.js' script (in debug.html)
 cat debug.html | sed -E 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' > debug2.html
 rm debug.html && mv debug2.html debug.html
-if [[ $? -ne 0 ]]; then
-  exit 2;
-fi
+if [[ $? -ne 0 ]]; then exit 2; fi
 
-# Specific desktop dependencies (for reading Duniter conf, ...)
-cd "$RELEASES/nwjs.app/Contents/Resources"
-yarn
-if [[ $? -ne 0 ]]; then
-  exit 2;
-fi
+# Specific desktop dependencies
+cd ${RELEASES}/nwjs.app/Contents/Resources/app.nw/cesium
+. /usr/local/bin/yarn
 
-# Releases
 cd ${RELEASES}
-zip -r ../cesium-desktop-v${CESIUM_TAG}-osx64-x64.zip *
-if [[ $? -ne 0 ]]; then
-  exit 2;
-fi
+mv nwjs.app Cesium.app #Rename
 
-#rm -rf ${RELEASES}
-#rm -rf ${RELEASES}
+# Releases into a ZIP file
+cd ${RELEASES}
+zip -r cesium-desktop-v${CESIUM_TAG}-osx-x64.zip Cesium.app
+if [[ $? -ne 0 ]]; then exit 2; fi
+
+mv cesium-desktop-v${CESIUM_TAG}-osx-x64.zip /vagrant

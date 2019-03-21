@@ -64,7 +64,7 @@ make)
       [[ $? -eq 0 ]] && cp "../../downloads/cesium-v$TAG-web.zip" ./
       [[ $? -eq 0 ]] && echo ">> Starting Vagrant OSx VM..."
       [[ $? -eq 0 ]] && vagrant up --provision
-      [[ $? -eq 0 ]] && echo ">> VM: building Cesium..."
+      [[ $? -eq 0 ]] && echo ">> Building Cesium for OSx..."
       [[ $? -eq 0 ]] && vagrant ssh -- 'bash -s' < ./build-osx.sh
       if [[ ! $? -eq 0 ]]; then
         echo ">> Something went wrong. Stopping build."
@@ -75,7 +75,26 @@ make)
       vagrant halt
       echo ">> VM closed."
     else
-      echo ">> Debian binaries already built. Ready for upload."
+      echo ">> OSx binaries already built. Ready for upload."
+    fi
+    ;;
+ios)
+    cd arch/osx
+    if [[ ! -f "cesium-v$TAG-ios.zip" ]]; then
+      [[ $? -eq 0 ]] && echo ">> Starting Vagrant OSx VM..."
+      [[ $? -eq 0 ]] && vagrant up --provision
+      [[ $? -eq 0 ]] && echo ">> Building Cesium for iOS..."
+      [[ $? -eq 0 ]] && vagrant ssh -- 'bash -s' < ./build-ios.sh
+      if [[ ! $? -eq 0 ]]; then
+        echo ">> Something went wrong. Stopping build."
+        exit -1;
+      else
+        echo ">> Build success. Shutting the VM down."
+      fi
+      vagrant halt
+      echo ">> VM closed."
+    else
+      echo ">> iOS binaries already built. Ready for upload."
     fi
     ;;
   *)
