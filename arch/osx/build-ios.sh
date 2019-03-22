@@ -22,7 +22,7 @@ mkdir -p "${DOWNLOADS}"
 # -----------
 
 # Remove old sources
-rm -rf "${DOWNLOADS}/cesium_src"
+#rm -rf "${DOWNLOADS}/cesium_src"
 
 # Get Cesium sources (from git)
 if [[ ! -d "$DOWNLOADS/cesium_src" ]]; then
@@ -41,6 +41,7 @@ if [[ ! -d "$DOWNLOADS/cesium_src" ]]; then
   if [[ $? -ne 0 ]]; then exit 2; fi
 else
   echo "Updating sources in ${DOWNLOADS}/cesium_src ..."
+  cd ${DOWNLOADS}/cesium_src
   git fetch
   git checkout origin/master
   if [[ $? -ne 0 ]]; then exit 2; fi
@@ -66,9 +67,15 @@ CESIUM_TAG=`echo $(git describe --tags $COMMIT) | sed 's/^v//'`
 # Remove old releases
 rm -rf /vagrant/cesium-*-ios.app
 
+# Make sure iOS platform exists
+if [[ ! -d "$DOWNLOADS/cesium_src/platforms/ios" ]]; then
+  cd ${DOWNLOADS}/cesium_src
+  ionic platform add ios
+fi
+
 # Run build
 cd ${DOWNLOADS}/cesium_src
-gulp config --env default
+gulp config --env default && gulp
 if [[ $? -ne 0 ]]; then exit 2; fi
 
 # Releases

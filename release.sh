@@ -113,13 +113,27 @@ for asset in $EXPECTED_ASSETS; do
     fi
 
     # OSX
-    if [[ $asset == *"osx.zip" ]]; then
+    if [[ $asset == *"osx-x64.zip" ]]; then
       if [[ $ARCH == "x86_64" ]]; then
         echo "Starting OSX build..."
         ./scripts/build.sh make osx $TAG
         OSX_PATH="$PWD/arch/osx/$asset"
         if [[ -f "${OSX_PATH}" ]]; then
           node ./scripts/upload-release.js ${REMOTE_TAG} ${OSX_PATH}
+        fi
+      else
+        echo "This computer cannot build this asset, required architecture is 'x86_64'. Skipping."
+      fi
+    fi
+
+    # iOS
+    if [[ $asset == *"ios.zip" ]]; then
+      if [[ $ARCH == "x86_64" ]]; then
+        echo "Starting iOS build..."
+        ./scripts/build.sh make ios $TAG
+        IOS_PATH="$PWD/arch/osx/$asset"
+        if [[ -f "${IOS_PATH}" ]]; then
+          node ./scripts/upload-release.js ${REMOTE_TAG} ${IOS_PATH}
         fi
       else
         echo "This computer cannot build this asset, required architecture is 'x86_64'. Skipping."

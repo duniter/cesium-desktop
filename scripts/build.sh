@@ -18,7 +18,7 @@ make)
       [[ $? -eq 0 ]] && vagrant ssh -- 'bash -s' < ./build-deb.sh
       if [[ ! $? -eq 0 ]]; then
         echo ">> Something went wrong. Stopping build."
-        exit -1;
+        exit 2;
       else
         echo ">> Build success. Shutting the VM down."
       fi
@@ -55,7 +55,7 @@ make)
     ;;
   osx)
     cd arch/osx
-    if [[ ! -f "cesium-desktop-v$TAG-osx.zip" ]]; then
+    if [[ ! -f "cesium-desktop-v$TAG-osx-x64.zip" ]]; then
       [[ $? -eq 0 ]] && echo ">> Copying Cesium Desktop sources..."
       [[ $? -eq 0 ]] && cp ../../src/nw/yarn.lock ./
       [[ $? -eq 0 ]] && cp ../../src/nw/package.json ./
@@ -68,7 +68,7 @@ make)
       [[ $? -eq 0 ]] && vagrant ssh -- 'bash -s' < ./build-osx.sh
       if [[ ! $? -eq 0 ]]; then
         echo ">> Something went wrong. Stopping build."
-        exit -1;
+        exit 2;
       else
         echo ">> Build success. Shutting the VM down."
       fi
@@ -87,7 +87,7 @@ ios)
       [[ $? -eq 0 ]] && vagrant ssh -- 'bash -s' < ./build-ios.sh
       if [[ ! $? -eq 0 ]]; then
         echo ">> Something went wrong. Stopping build."
-        exit -1;
+        exit 2;
       else
         echo ">> Build success. Shutting the VM down."
       fi

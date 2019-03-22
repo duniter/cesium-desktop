@@ -126,11 +126,11 @@ cd ${RELEASES}/nwjs.app/Contents/Resources/app.nw/cesium
 . /usr/local/bin/yarn
 
 cd ${RELEASES}
-mv nwjs.app Cesium.app #Rename
+#FIXME Seems to not work...
+mv nwjs.app Cesium.app
+if [[ $? -ne 0 ]]; then exit 2; fi
 
 # Releases into a ZIP file
 cd ${RELEASES}
-zip -r cesium-desktop-v${CESIUM_TAG}-osx-x64.zip Cesium.app
+zip -r /vagrant/cesium-desktop-v${CESIUM_TAG}-osx-x64.zip Cesium.app nwjs.app
 if [[ $? -ne 0 ]]; then exit 2; fi
-
-mv cesium-desktop-v${CESIUM_TAG}-osx-x64.zip /vagrant
