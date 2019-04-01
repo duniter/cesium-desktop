@@ -1,4 +1,10 @@
-node_modules/
+package-lock.json
+yarn.lock
+node_modules
+
+downloads
+tmp
+.idea
 
 src/nw/lib
 src/nw/locales
@@ -13,15 +19,12 @@ src/nw/*.pak
 src/nw/nacl*
 src/nw/minidump*
 src/nw/payload*
-src/nw/cesium/dist*
-src/nw/cesium/fonts
-src/nw/cesium/img
-src/nw/cesium/lib
-src/nw/cesium/api
-src/nw/cesium/license
-src/nw/cesium/config.js
-src/nw/cesium/*.html
-src/nw/cesium/manifest.json
+src/nw/yarn.lock
+src/nw/package-lock.json
+src/nw/cesium
+!src/nw/cesium/node.js
+src/nw/swiftshader/libEGL.so
+src/nw/swiftshader/libGLESv2.so
 
 arch/linux/.vagrant
 arch/linux/cesium*
@@ -45,16 +48,5 @@ arch/osx/*.xip
 arch/osx/cesium-*-web.zip
 arch/osx/yarn.*
 
-.idea/
 
-src/nw/cesium
-!src/nw/cesium/node.js
-tmp
 
-package-lock.json
-src/nw/swiftshader/libEGL.so
-src/nw/swiftshader/libGLESv2.so
-
-src/nw/yarn.lock
-
-downloads
