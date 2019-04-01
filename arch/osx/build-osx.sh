@@ -10,7 +10,7 @@ nvm install 6
 # Prepare
 NVER=`node -v`
 CESIUM_TAG=
-NW_VERSION=0.35.4
+NW_VERSION=0.37.1
 NW_RELEASE="v${NW_VERSION}"
 NW="nwjs-${NW_RELEASE}-osx-x64"
 NW_ZIP="${NW}.zip"

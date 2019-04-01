@@ -73,6 +73,7 @@ then
   OLD_VERSION=`grep -oP "version\": \"\d+.\d+.\d+((a|b)[0-9]+)?\"" $ROOT_DIR/src/nw/cesium/manifest.json | grep -oP "\d+.\d+.\d+((a|b)[0-9]+)?"`
   if [[ ! "$VERSION" = "$OLD_VERSION" ]];
   then
+    echo "Removing previous version ${OLD_VERSION}..."
     rm -rf $ROOT_DIR/src/nw/cesium/dist_*
     rm -rf $ROOT_DIR/src/nw/cesium/fonts
     rm -rf $ROOT_DIR/src/nw/cesium/img

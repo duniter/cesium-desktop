@@ -6,10 +6,10 @@ const expectedCurrency = "g1"
 
 /**** NODEJS MODULES ****/
 
-const fs = requireNodejs('fs')
-const path = requireNodejs('path')
-const yaml = requireNodejs('js-yaml')
-const bs58 = requireNodejs('bs58')
+const fs = requireNodejs('fs');
+const path = requireNodejs('path');
+const yaml = requireNodejs('js-yaml');
+const bs58 = requireNodejs('bs58');
 const clc = requireNodejs('cli-color');
 const gui = requireNodejs('nw.gui');
 
@@ -19,12 +19,12 @@ Base58 = {
 }
 
 /**** Program ****/
-const HOME = requireNodejs('os').homedir()
-const CESIUM_HOME = path.resolve(HOME, '.config/cesium/')
-const CESIUM_KEYRING = path.resolve(CESIUM_HOME, 'keyring.yml')
-const DUNITER_HOME = path.resolve(HOME, '.config/duniter/duniter_default')
-const DUNITER_CONF = path.resolve(DUNITER_HOME, 'conf.json')
-const DUNITER_KEYRING = path.resolve(DUNITER_HOME, 'keyring.yml')
+const HOME = requireNodejs('os').homedir();
+const CESIUM_HOME = path.resolve(HOME, '.config/cesium/');
+const CESIUM_KEYRING = path.resolve(CESIUM_HOME, 'keyring.yml');
+const DUNITER_HOME = path.resolve(HOME, '.config/duniter/duniter_default');
+const DUNITER_CONF = path.resolve(DUNITER_HOME, 'conf.json');
+const DUNITER_KEYRING = path.resolve(DUNITER_HOME, 'keyring.yml');
 const DEFAULT_CESIUM_SETTINGS = {
   "useRelative": false,
   "timeWarningExpire": 2592000,
@@ -145,7 +145,7 @@ if (!isSdkMode() || !options.debug) {
 /**** Starting (main win) ****/
 
 if (isMainWin()) {
-  const nww = requireNodejs('nw');
+  //const nww = requireNodejs('nw');
   let settingsStr = window.localStorage.getItem('settings');
   let settings = (settingsStr && JSON.parse(settingsStr));
   const locale = (settings && settings.locale && settings.locale.id).split('-')[0] || 'en';
@@ -172,7 +172,6 @@ if (isMainWin()) {
       submenu: filemenu
     }));
 
-
     // Window
     var winmenu = new gui.Menu();
     let newWinItem = new gui.MenuItem({
@@ -194,7 +193,6 @@ if (isMainWin()) {
             focus: true
           },
           function(win){
-            // 38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE
             win.window.localStorage.setItem('pubkey', "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE");
             console.log("[NW] Loading wallet 1...");
           });
@@ -276,7 +274,7 @@ if (isMainWin()) {
     let keyPairOK = pubkey && true;
     if (keyPairOK) {
       console.log('Compte connecté dans Cesium. Comparaison avec celui du nœud local...')
-      keyPairOK = data.pubkey === keyring.pub;
+      keyPairOK = pubkey === keyring.pub;
       if (!keyPairOK) {
         console.log('Le compte Cesium est différent de celui du nœud.')
         // Check is need to ask user to use node keyring

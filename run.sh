@@ -2,7 +2,7 @@
 
 ROOT=`pwd`
 VERSION=$1
-if [[ "${VERSION}" -eq "DEV" ]]; then
+if [[ "${VERSION}" = "DEV" ]]; then
   # Installing default version
   ./install.sh
   if [[ ! $? -eq 0 ]]; then
@@ -12,11 +12,16 @@ if [[ "${VERSION}" -eq "DEV" ]]; then
   # Copying DEV files
   if [[ -d "${ROOT}/../../www/dist" ]]; then
     echo "Copying DEV files..."
-    cp -rf ${ROOT}/../../www/dist/dist_js ${ROOT}/src/nw/cesium
-    cp -rf ${ROOT}/../../www/dist/dist_css ${ROOT}/src/nw/cesium
+    mkdir -p ${ROOT}/src/nw/cesium/dist
+    mkdir -p ${ROOT}/src/nw/cesium/js
+    cp -rf ${ROOT}/../../www/dist/dist_js ${ROOT}/src/nw/cesium/dist
+    cp -rf ${ROOT}/../../www/dist/dist_css ${ROOT}/src/nw/cesium/dist
+    cp -rf ${ROOT}/../../www/js/vendor ${ROOT}/src/nw/cesium/js
+    cp -rf ${ROOT}/../../www/css ${ROOT}/src/nw/cesium
     cp -rf ${ROOT}/../../www/img ${ROOT}/src/nw/cesium
     cp -rf ${ROOT}/../../www/lib ${ROOT}/src/nw/cesium
     cp -rf ${ROOT}/../../www/license ${ROOT}/src/nw/cesium
+    cp -f ${ROOT}/../../www/index.html ${ROOT}/src/nw/cesium/debug.html
   fi
 
 

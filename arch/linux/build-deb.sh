@@ -7,8 +7,7 @@ export NVM_DIR="$HOME/.nvm"
 # Prepare
 NVER=`node -v`
 CESIUM_TAG=
-ADDON_VERSION=48
-NW_VERSION=0.35.3
+NW_VERSION=0.37.1
 NW_RELEASE="v${NW_VERSION}"
 NW="nwjs-${NW_RELEASE}-linux-x64"
 NW_GZ="${NW}.tar.gz"
@@ -61,7 +60,10 @@ fi
 CESIUM_DEB_VER=" $CESIUM_TAG"
 CESIUM_TAG="v$CESIUM_TAG"
 
-if [[ ! -f "$DOWNLOADS/$NW_GZ" ]]; then
+# Get NW.js
+if [[ ! -d "$DOWNLOADS/$NW" ]]; then
+  cd ${DOWNLOADS}
+  echo "Downloading ${NW_GZ}..."
   wget https://dl.nwjs.io/${NW_RELEASE}/${NW_GZ}
   tar xvzf ${NW_GZ}
 fi
