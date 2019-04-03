@@ -2,8 +2,11 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "jhcook/osx-elcapitan-10.11"
-  #config.vm.define "cesium-release-osx"
+  config.vm.box = "ashiq/osx-10.14"
+  config.vm.define "cesium-release-osx"
+
+  #config.vm.box_version = "0.1"
+  #config.vm.box_url = "./osx-10.14.box"
 
   config.vm.provision :shell, path: "bootstrap.sh"
 

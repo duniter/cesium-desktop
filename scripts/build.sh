@@ -37,6 +37,7 @@ make)
       [[ $? -eq 0 ]] && cp ../../src/nw/cesium/node.js ./
       # Win build need a copy of the web asset (download in build.bat failed)
       [[ $? -eq 0 ]] && cp "../../downloads/cesium-v$TAG-web.zip" ./
+      # Download box locally
       if [[ $? -eq 0 && ! -f ./duniter_win7.box ]]; then
         echo ">> Downloading Windows VM..."
         wget -kL https://s3.eu-central-1.amazonaws.com/duniter/vagrant/duniter_win7.box
@@ -62,6 +63,16 @@ make)
       [[ $? -eq 0 ]] && cp ../../src/nw/cesium/node.js ./
       # OSx need a copy of the web asset  (download in build-osx.sh failed)
       [[ $? -eq 0 ]] && cp "../../downloads/cesium-v$TAG-web.zip" ./
+      # Download box locally
+      #if [[ $? -eq 0 && ! -f ./osx-10.14.box ]]; then
+      #  echo ">> Downloading OSx VM..."
+      #  wget -kL https://vagrantcloud.com/ashiq/boxes/osx-10.14/versions/0.1/providers/virtualbox.box
+      #  mv virtualbox.box osx-10.14.box
+      #fi
+      # Download OS update
+      #if [[ $? -eq 0 && ! -f ./osxupd10.11.1.dmg ]]; then
+      #  wget -kL https://download.info.apple.com/Mac_OS_X/031-42278-20151021-40e0f5a6-7806-11e5-8b62-f64340b99175/osxupd10.11.1.dmg
+      #fi
       [[ $? -eq 0 ]] && echo ">> Starting Vagrant OSx VM..."
       [[ $? -eq 0 ]] && vagrant up --provision
       [[ $? -eq 0 ]] && echo ">> Building Cesium for OSx..."

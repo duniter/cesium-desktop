@@ -27,7 +27,7 @@ src/nw/swiftshader/libEGL.so
 src/nw/swiftshader/libGLESv2.so
 
 arch/linux/.vagrant
-arch/linux/cesium*
+arch/linux/cesium-*
 arch/linux/*.js*
 arch/linux/yarn*
 arch/linux/ubuntu*
@@ -44,9 +44,8 @@ arch/windows/*.box
 arch/windows/.directory
 
 arch/osx/.vagrant
-arch/osx/*.xip
-arch/osx/cesium-*-web.zip
+arch/osx/cesium-*
 arch/osx/yarn.*
-
-
-
+arch/osx/*.xip
+arch/osx/*.box
+arch/osx/*.dmg
