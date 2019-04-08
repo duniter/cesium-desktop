@@ -30,6 +30,13 @@ fi
 if [[ -d "$NVM_DIR" ]]; then
     . $NVM_DIR/nvm.sh
     nvm use 6
+    if [[ $? -ne 0 ]]; then
+        nvm install 6
+        if [[ $? -ne 0 ]]; then
+            exit 1;
+        fi
+    fi
+    
 else
     echo "nvm (Node version manager) not found (directory NVM_DIR not defined). Please install nvm, and retry"
     exit -1
