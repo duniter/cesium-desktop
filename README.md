@@ -16,11 +16,13 @@ This script will run Cesium Desktop, taking care of installing Cesium + Nw.js if
 
 > You can create such a token at https://github.com/settings/tokens > "Generate a new token". Then copy the token and paste it in the file.
 
-#### Install Virtualbox
+#### Install Virtualbox and Vagrant
 
-The release script use some DockerFile, that need a VM manager (like VirtualBox) installed.
+The release script use some Vagrant, and a VM running into VirtualBox.
 
-**note**: The OSx build requires the VirtualBox Extension Pack, to support USB.
+- Install VirtualBox
+- Install the VirtualBox Extension Pack (need by OSx build, for USB support).
+- Install vagrant : `sudo apt-get install vargrant`
 
 ### Execute release script
 
