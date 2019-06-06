@@ -1,12 +1,12 @@
 Package: cesium
-Version: 1.2.6
+Version: 1.4.0
 Section: misc
 Priority: optional
 Architecture: all
 Installed-Size: 235351
 Maintainer: Duniter Team <contact@duniter.org>
-Description: Cesium Wallet for &#x011E;1 currency
- Cesium is a wallet (client-software) for &#x011E;1, a libre currency.
- Please visit https://www.duniter.org for more information on &#x011E;1 and libre currencies.
+Description: Cesium Wallet forG1 currency
+ Cesium is a wallet (client-software) for G1 a libre currency.
+ Please visit https://www.duniter.org for more information on G1 and libre currencies.
 Depends: libgconf-2-4 (>= 3.2.0)
 Homepage: https://www.cesium.app
