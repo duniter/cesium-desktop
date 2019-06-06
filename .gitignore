@@ -5,6 +5,7 @@ node_modules
 downloads
 tmp
 .idea
+.local
 
 src/nw/lib
 src/nw/locales
