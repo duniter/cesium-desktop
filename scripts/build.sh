@@ -58,7 +58,6 @@ make)
     cd arch/osx
     if [[ ! -f "cesium-desktop-v$TAG-osx-x64.zip" ]]; then
       [[ $? -eq 0 ]] && echo ">> Copying Cesium Desktop sources..."
-      [[ $? -eq 0 ]] && cp ../../src/nw/yarn.lock ./
       [[ $? -eq 0 ]] && cp ../../src/nw/package.json ./
       [[ $? -eq 0 ]] && cp ../../src/nw/cesium/node.js ./
       # OSx need a copy of the web asset  (download in build-osx.sh failed)
