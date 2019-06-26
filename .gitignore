@@ -50,3 +50,5 @@ arch/osx/yarn.*
 arch/osx/*.xip
 arch/osx/*.box
 arch/osx/*.dmg
+
+desktop
