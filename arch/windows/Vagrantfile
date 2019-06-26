@@ -4,7 +4,7 @@
 Vagrant.configure("2") do |config|
   config.vm.define "cesium-release-windows"
 
-  #config.vm.box = "duniter/cesium_win7"
+  config.vm.box = "duniter/cesium_win7"
   #config.vm.box_url = "https://s3.eu-central-1.amazonaws.com/duniter/vagrant/duniter_win7.box"
   config.vm.box_url = "./duniter_win7.box"
 
