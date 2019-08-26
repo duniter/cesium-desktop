@@ -1,8 +1,8 @@
 // Rename "require" to avoid conflicts with pure JS libraries
-requireNodejs = require
-require = undefined
+requireNodejs = require;
+require = undefined;
 
-const expectedCurrency = "g1"
+const expectedCurrency = "g1";
 
 /**** NODEJS MODULES ****/
 
@@ -16,7 +16,7 @@ const gui = requireNodejs('nw.gui');
 Base58 = {
   encode: (bytes) => bs58.encode(new Buffer(bytes)),
   decode: (data) => new Uint8Array(bs58.decode(data))
-}
+};
 
 /**** Program ****/
 const HOME = requireNodejs('os').homedir();
@@ -74,7 +74,7 @@ function isSdkMode () {
   return gui && (window.navigator.plugins.namedItem('Native Client') !== null);
 }
 function isMainWin() {
-  return gui && gui.Window.get().title && true;
+  return gui && gui.Window && gui.Window.get().title && true;
 }
 
 /**** Process command line args ****/
