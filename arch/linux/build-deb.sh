@@ -9,7 +9,7 @@ NVER=`node -v`
 CESIUM_TAG=
 NW_VERSION=0.40.1
 NW_RELEASE="v${NW_VERSION}"
-NW_BASENAME=nwjs
+NW_BASENAME=nwjs-sdk
 NW="${NW_BASENAME}-${NW_RELEASE}-linux-x64"
 NW_GZ="${NW}.tar.gz"
 
@@ -52,7 +52,7 @@ if [[ ! -e "$DOWNLOADS/$CESIUM_RELEASE.zip" ]]; then
     echo "Have to download it into ${DOWNLOADS}"
     cd cesium
 
-    wget "https://github.com/duniter/cesium/releases/download/v$CESIUM_TAG/$CESIUM_RELEASE.zip"
+    wget -kL "https://github.com/duniter/cesium/releases/download/v$CESIUM_TAG/$CESIUM_RELEASE.zip"
     unzip $CESIUM_RELEASE.zip
     rm $CESIUM_RELEASE.zip
     cd ..
@@ -65,7 +65,7 @@ CESIUM_TAG="v$CESIUM_TAG"
 if [[ ! -d "$DOWNLOADS/$NW" ]]; then
   cd ${DOWNLOADS}
   echo "Downloading ${NW_GZ}..."
-  wget https://dl.nwjs.io/${NW_RELEASE}/${NW_GZ}
+  wget -kL https://dl.nwjs.io/${NW_RELEASE}/${NW_GZ}
   tar xvzf ${NW_GZ}
 fi
 
