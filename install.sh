@@ -2,10 +2,10 @@
 
 ROOT_DIR=$PWD
 TEMP_DIR=$PWD/tmp
-NW_VERSION=0.35.3
+NW_VERSION=0.40.1
 NW_BASENAME=nwjs-sdk
-CHROMIUM_MAJOR_VERSION=71
-CESIUM_DEFAULT_VERSION=1.2.9
+CHROMIUM_MAJOR_VERSION=76
+CESIUM_DEFAULT_VERSION=1.4.3
 
 # Check first arguments = version
 if [[ $1 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ ]];
@@ -33,19 +33,18 @@ if [[ -d "$NVM_DIR" ]]; then
     nvm use 6
 else
     echo "nvm (Node version manager) not found (directory NVM_DIR not defined). Please install nvm, and retry"
-    exit -1
+    exit 1
 fi
-
-mkdir -p $TEMP_DIR && cd $TEMP_DIR
-
 
 # Install NW.js
 if [[ ! -f $ROOT_DIR/src/nw/nw ]];
 then
+  mkdir -p $TEMP_DIR && cd $TEMP_DIR
+  rm -rf ${TEMP_DIR}/*
   cd ${TEMP_DIR}
   wget http://dl.nwjs.io/v${NW_VERSION}/${NW_BASENAME}-v${NW_VERSION}-linux-x64.tar.gz
   tar xvzf ${NW_BASENAME}-v${NW_VERSION}-linux-x64.tar.gz
-  mv ${NW_BASENAME}-v${NW_VERSION}-linux-x64/* "$ROOT_DIR/src/nw"
+  mv -f ${NW_BASENAME}-v${NW_VERSION}-linux-x64/* "$ROOT_DIR/src/nw"
   rm ${NW_BASENAME}-v${NW_VERSION}-linux-x64.tar.gz
   rmdir ${NW_BASENAME}-v${NW_VERSION}-linux-x64
   rmdir nw
@@ -58,8 +57,9 @@ else
   CHROMIUM_ACTUAL_MAJOR_VERSION=`echo ${NW_ACTUAL_VERSION} | awk '{split($0, array, ".")} END{print array[1]}'`
   cd ${ROOT_DIR}
   if [[ ${CHROMIUM_ACTUAL_MAJOR_VERSION} -ne ${CHROMIUM_MAJOR_VERSION} ]]; then
-    echo "Bad Chromium major version: ${CHROMIUM_ACTUAL_MAJOR_VERSION}. Expected version ${CHROMIUM_MAJOR_VERSION}"
-    exit -1
+    echo "Bad Chromium major version: ${CHROMIUM_ACTUAL_MAJOR_VERSION}. Expected version ${CHROMIUM_MAJOR_VERSION}."
+    echo " - try to remove file '$ROOT_DIR/src/nw/nw', then relaunch the script"
+    exit 1
   fi
 fi
 
@@ -81,6 +81,8 @@ then
     rm -rf $ROOT_DIR/src/nw/cesium/api
     rm -rf $ROOT_DIR/src/nw/cesium/license
     rm -rf $ROOT_DIR/src/nw/cesium/*.html
+    rm -rf $ROOT_DIR/src/nw/cesium/manifest.json
+    rm -rf $ROOT_DIR/src/nw/cesium/config.js
   fi
 fi
 
@@ -88,11 +90,12 @@ fi
 if [[ ! -f $ROOT_DIR/src/nw/cesium/index.html ]]; then
     echo "Downloading Cesium ${VERSION}..."
 
+    mkdir -p $TEMP_DIR && cd $TEMP_DIR
     mkdir -p ${TEMP_DIR}/cesium_unzip && cd ${TEMP_DIR}/cesium_unzip
     wget "https://github.com/duniter/cesium/releases/download/v${VERSION}/cesium-v${VERSION}-web.zip"
     if [[ ! $? -eq 0 ]]; then
         echo "Could not download Cesium web release !"
-        exit -1;
+        exit 1;
     fi
     unzip "cesium-v${VERSION}-web.zip" -d ${TEMP_DIR}/cesium_unzip
     rm "cesium-v${VERSION}-web.zip"
@@ -108,5 +111,4 @@ if [[ ! -f $ROOT_DIR/src/nw/cesium/index.html ]]; then
 fi
 
 cd $ROOT_DIR
-rmdir $TEMP_DIR
 

@@ -22,7 +22,7 @@ The release script use some Vagrant, and a VM running into VirtualBox.
 
 - Install VirtualBox
 - Install the VirtualBox Extension Pack (need by OSx build, for USB support).
-- Install vagrant : `sudo apt-get install vargrant`
+- Install vagrant : `sudo apt-get install vagrant`
 
 ### Execute release script
 

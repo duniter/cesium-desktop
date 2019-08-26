@@ -7,9 +7,10 @@ export NVM_DIR="$HOME/.nvm"
 # Prepare
 NVER=`node -v`
 CESIUM_TAG=
-NW_VERSION=0.37.1
+NW_VERSION=0.40.1
 NW_RELEASE="v${NW_VERSION}"
-NW="nwjs-${NW_RELEASE}-linux-x64"
+NW_BASENAME=nwjs
+NW="${NW_BASENAME}-${NW_RELEASE}-linux-x64"
 NW_GZ="${NW}.tar.gz"
 
 # Folders
