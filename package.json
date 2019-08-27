@@ -6,6 +6,8 @@
     "js-yaml": "^3.8.4",
     "cli-color": "^1.4.0",
     "request": "^2.81.0",
-    "request-promise": "^4.2.1"
-  }
+    "request-promise": "^4.2.1",
+    "stringstream": "^0.0.6"
+  },
+
 }
