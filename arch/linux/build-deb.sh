@@ -7,9 +7,10 @@ export NVM_DIR="$HOME/.nvm"
 # Prepare
 NVER=`node -v`
 CESIUM_TAG=
-NW_VERSION=0.40.1
+NW_VERSION=0.42.2
 NW_RELEASE="v${NW_VERSION}"
-NW_BASENAME=nwjs-sdk
+NW_BASENAME=nwjs
+#NW_BASENAME=nwjs-sdk
 NW="${NW_BASENAME}-${NW_RELEASE}-linux-x64"
 NW_GZ="${NW}.tar.gz"
 
@@ -103,8 +104,8 @@ cp -r /vagrant/package.json "$RELEASES/desktop_release/nw/"
 cp -r /vagrant/yarn.lock "$RELEASES/desktop_release/nw/"
 cp -r /vagrant/node.js "$RELEASES/desktop_release/nw/cesium"
 # Injection
-sed -i 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' "$RELEASES/desktop_release/nw/cesium/index.html"
-sed -i 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' "$RELEASES/desktop_release/nw/cesium/debug.html"
+sed -i 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' "$RELEASES/desktop_release/nw/cesium/index.html" || exit 1
+sed -i 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' "$RELEASES/desktop_release/nw/cesium/debug.html" || exit 1
 
 # Specific desktop dependencies (for reading Duniter conf, ...)
 cd "$RELEASES/desktop_release/nw"
@@ -120,15 +121,15 @@ tar czf /vagrant/cesium-desktop-${CESIUM_TAG}-linux-x64.tar.gz * --exclude ".git
 # -------------------------------------------------
 
 # Create .deb tree + package it
-cp -r "/vagrant/package" "$RELEASES/cesium-x64"
+cp -rf "/vagrant/package" "$RELEASES/cesium-x64" || exit 1
 mkdir -p "$RELEASES/cesium-x64/opt/cesium/"
 chmod 755 ${RELEASES}/cesium-x64/DEBIAN/post*
 chmod 755 ${RELEASES}/cesium-x64/DEBIAN/pre*
-sed -i "s/Version:.*/Version:$CESIUM_DEB_VER/g" ${RELEASES}/cesium-x64/DEBIAN/control
-cd ${RELEASES}/desktop_release/nw
+sed -i "s/Version:.*/Version:$CESIUM_DEB_VER/g" ${RELEASES}/cesium-x64/DEBIAN/control || exit 1
+cd ${RELEASES}/desktop_release/nw || exit 1
 zip -qr ${RELEASES}/cesium-x64/opt/cesium/nw.nwb *
 
-sed -i "s/Package: .*/Package: cesium-desktop/g" ${RELEASES}/cesium-x64/DEBIAN/control
-cd ${RELEASES}/
-fakeroot dpkg-deb --build cesium-x64
-mv cesium-x64.deb /vagrant/cesium-desktop-${CESIUM_TAG}-linux-x64.deb
+sed -i "s/Package: .*/Package: cesium-desktop/g" ${RELEASES}/cesium-x64/DEBIAN/control || exit 1
+cd ${RELEASES}/ || exit 1
+fakeroot dpkg-deb --build cesium-x64 || exit 1
+mv cesium-x64.deb /vagrant/cesium-desktop-${CESIUM_TAG}-linux-x64.deb || exit 1

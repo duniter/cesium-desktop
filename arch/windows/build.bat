@@ -1,7 +1,8 @@
 
-set NW_VERSION=0.40.1
+set NW_VERSION=0.42.2
 set NW_RELEASE=v%NW_VERSION%
 set NW_BASENAME=nwjs
+REM set NW_BASENAME=nwjs-sdk
 set NW=%NW_BASENAME%-%NW_RELEASE%-win-x64
 set NW_GZ=%NW%.zip
 echo "NW.js %NW_VERSION%"
