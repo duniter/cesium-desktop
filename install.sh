@@ -47,7 +47,6 @@ then
   tar xvzf ${NW_BASENAME}-v${NW_VERSION}-linux-x64.tar.gz || exit 1
   cp -rf ${NW_BASENAME}-v${NW_VERSION}-linux-x64/* "${ROOT_DIR}/src/nw" && rm -rf ${NW_BASENAME}-v${NW_VERSION}-linux-x64 || exit 1
   rm ${NW_BASENAME}-v${NW_VERSION}-linux-x64.tar.gz || exit 1
-  rmdir ${NW_BASENAME}-v${NW_VERSION}-linux-x64 || exit 1
   rmdir nw
 
 # Check NW version
