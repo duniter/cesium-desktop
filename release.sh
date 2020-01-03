@@ -1,5 +1,9 @@
 #!/bin/bash
 
+PROJECT_NAME=cesium
+REPO="duniter/cesium"
+REPO_PUBLIC_URL="https://github.com/${REPO}"
+NODEJS_VERSION=10
 TAG="$1"
 TAG_NAME="v$1"
 ARCH=`uname -m`
@@ -27,33 +31,32 @@ if [[ -z $TAG ]]; then
 fi
 
 # Force nodejs version to 6
-if [[ -d "$NVM_DIR" ]]; then
-    . $NVM_DIR/nvm.sh
-    nvm use 6
+if [[ -d "${NVM_DIR}" ]]; then
+    . ${NVM_DIR}/nvm.sh
+    nvm use ${NODEJS_VERSION}
     if [[ $? -ne 0 ]]; then
-        nvm install 6
+        nvm install ${NODEJS_VERSION}
         if [[ $? -ne 0 ]]; then
             exit 1;
         fi
     fi
-    
+
 else
     echo "nvm (Node version manager) not found (directory NVM_DIR not defined). Please install nvm, and retry"
-    exit -1
+    exit 1
 fi
 
 # install dep if not already done
 if [[ ! -d "node_modules" ]]; then
-    npm install
-    if [[ $? -ne 0 ]]; then
-        exit 2
-    fi
+    yarn
 fi
 
+# Check that the tag exists remotely
 echo "Checking that $TAG has been pushed to 'origin'..."
 REMOTE_TAG=`node scripts/exists-tag.js "$TAG_NAME" | grep -Fo "$TAG_NAME"`
-if [[ -z $REMOTE_TAG ]]; then
-  echo "The '$TAG' tag does not exist on 'origin' repository. Use command ./new_version.sh to create a new version and use 'git push origin --tags' to share the tag."
+
+if [[ -z ${REMOTE_TAG} ]]; then
+  echo "The '$TAG' tag does not exist on 'origin' repository. Use command ./release.sh to create a new version and use 'git push origin --tags' to share the tag."
   exit 2
 fi
 
@@ -62,29 +65,28 @@ echo "Creating the pre-release if it does not exist..."
 ASSETS=`node ./scripts/create-release.js $REMOTE_TAG create`
 
 # Downloading web assets (once)
-CESIUM_RELEASE="cesium-$REMOTE_TAG-web"
-if [[ ! -f "${DOWNLOADS}/${CESIUM_RELEASE}.zip" ]]; then
-    echo "Downloading Cesium web release..."
-    mkdir -p ${DOWNLOADS}
-    cd ${DOWNLOADS}
-    wget "https://github.com/duniter/cesium/releases/download/$REMOTE_TAG/$CESIUM_RELEASE.zip"
+ZIP_BASENAME="${PROJECT_NAME}-${REMOTE_TAG}-web"
+if [[ ! -f "${DOWNLOADS}/${ZIP_BASENAME}.zip" ]]; then
+    echo "Downloading ${PROJECT_NAME} web release..."
+    mkdir -p ${DOWNLOADS} && cd ${DOWNLOADS} || exit 1
+    wget "${REPO_PUBLIC_URL}/releases/download/${REMOTE_TAG}/${ZIP_BASENAME}.zip"
     if [[ $? -ne 0 ]]; then
         exit 2
     fi
-    cd $ROOT
+    cd ${ROOT}
 fi
-
 
 if [[ "_$EXPECTED_ASSETS" == "_" ]]; then
-  EXPECTED_ASSETS="cesium-desktop-$REMOTE_TAG-linux-x64.deb
-cesium-desktop-$REMOTE_TAG-linux-x64.tar.gz
-cesium-desktop-$REMOTE_TAG-windows-x64.exe"
+    EXPECTED_ASSETS="${PROJECT_NAME}-desktop-$REMOTE_TAG-linux-x64.deb
+${PROJECT_NAME}-desktop-$REMOTE_TAG-linux-x64.tar.gz
+${PROJECT_NAME}-desktop-$REMOTE_TAG-windows-x64.exe"
 fi
 
-
 # Remove old vagrant virtual machines
-#echo 'Removing old Vagrant VM... TODO: optimize this !'
-#rm -rf ~/.vagrant.d/*
+echo "Removing old Vagrant VM... TODO: optimize this !"
+rm -rf ~/.vagrant.d/*
+
+echo "Assets: $EXPECTED_ASSETS"
 
 for asset in $EXPECTED_ASSETS; do
   if [[ -z `echo $ASSETS | grep -F "$asset"` ]]; then
