@@ -48,7 +48,7 @@ fi
 
 cd ${PROJECT_NAME}_src
 COMMIT=`git rev-list --tags --max-count=1`
-$TAG=`echo $(git describe --tags $COMMIT) | sed 's/^v//'`
+TAG=`echo $(git describe --tags $COMMIT) | sed 's/^v//'`
 cd ..
 
 ZIP_BASENAME="${PROJECT_NAME}-v$TAG-web"
