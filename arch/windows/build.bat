@@ -14,6 +14,7 @@ set PATH="C:\Program Files (x86)\Inno Setup 5";%PATH%
 
 cd C:\Users\vagrant
 REM echo "Suppression des anciennes sources..."
+del /s /q cesium-v*-web.zip
 rd /s /q cesium
 rd /s /q cesium_release
 echo "Clonage de Cesium..."
