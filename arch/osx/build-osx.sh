@@ -118,11 +118,6 @@ cat index.html | sed -E 's/<script src="config.js"><\/script>/<script src="confi
 rm index.html && mv index2.html index.html
 if [[ $? -ne 0 ]]; then exit 2; fi
 
-# Inject 'node.js' script (in debug.html)
-cat debug.html | sed -E 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' > debug2.html
-rm debug.html && mv debug2.html debug.html
-if [[ $? -ne 0 ]]; then exit 2; fi
-
 # Specific desktop dependencies
 cd ${RELEASES}/nwjs.app/Contents/Resources/app.nw/cesium
 . /usr/local/bin/yarn

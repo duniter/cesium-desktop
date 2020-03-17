@@ -178,7 +178,7 @@ if (isMainWin()) {
       label: I18N[locale].MENU.NEW_WINDOW_ITEM,
       click: function() {
         console.log("[NW] Opening new window...");
-        gui.Window.open("cesium/debug.html");
+        gui.Window.open("cesium/index.html");
       },});
     winmenu.append(newWinItem);
 
@@ -189,7 +189,7 @@ if (isMainWin()) {
       label: I18N[locale].MENU.OPEN_ACCOUNT||'Wallet 1',
       click: function() {
         console.log("[NW] Opening wallet 1...");
-        gui.Window.open("cesium/debug.html", {
+        gui.Window.open("cesium/index.html", {
             focus: true
           },
           function(win){

@@ -56,10 +56,8 @@ call npm install
 
 cd C:\Users\vagrant\cesium_release\cesium
 powershell -Command "(Get-Content C:\Users\vagrant\cesium_release\cesium\index.html) | foreach-object {$_ -replace '<script src=\"config.js\"></script>','<script src=\"config.js\"></script><script src=\"node.js\"></script>' } | Set-Content C:\Users\vagrant\cesium_release\cesium\index.txt"
-powershell -Command "(Get-Content C:\Users\vagrant\cesium_release\cesium\debug.html) | foreach-object {$_ -replace '<script src=\"config.js\"></script>','<script src=\"config.js\"></script><script src=\"node.js\"></script>' } | Set-Content C:\Users\vagrant\cesium_release\cesium\debug.txt"
 
 move index.txt index.html
-move debug.txt debug.html
 cd ..
 
 iscc C:\vagrant\cesium.iss /DROOT_PATH=%cd%

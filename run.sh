@@ -21,7 +21,7 @@ if [[ "${VERSION}" = "DEV" ]]; then
     cp -rf ${ROOT}/../../www/img ${ROOT}/src/nw/cesium
     cp -rf ${ROOT}/../../www/lib ${ROOT}/src/nw/cesium
     cp -rf ${ROOT}/../../www/license ${ROOT}/src/nw/cesium
-    cp -f ${ROOT}/../../www/index.html ${ROOT}/src/nw/cesium/debug.html
+    cp -f ${ROOT}/../../www/index.html ${ROOT}/src/nw/cesium
   fi
 
 

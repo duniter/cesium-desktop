@@ -69,22 +69,23 @@ const I18N = {
     }
   }
 };
+const commands = gui && gui.App && gui.App.argv;
+const options = {
+  debug: false,
+  menu: false
+};
 
 function isSdkMode () {
   return gui && (window.navigator.plugins.namedItem('Native Client') !== null);
 }
 function isMainWin() {
-  return gui && gui.Window && gui.Window.get().title && true;
+  return (!options.debug && !options.menu) || (gui && gui.Window && gui.Window.get().title && true);
 }
 
 /**** Process command line args ****/
-var commands = gui && gui.App && gui.App.argv;
-var options = {
-  debug: false,
-  menu: false
-};
+
 if (commands && commands.length) {
-  for (i in commands) {
+  for (let i in commands) {
     switch (commands[i]) {
       case "--debug":
         options.debug = true;
@@ -102,32 +103,34 @@ if (commands && commands.length) {
   }
 }
 
+
+
 /**** Re-routing console log ****/
 if (!isSdkMode() || !options.debug) {
-  var oldConsole = {
+  const superConsole = {
     log: console.log,
     debug: console.debug,
     info: console.info,
     warn: console.warn,
     error: console.error,
   }
-  if (debug) {
+  if (options.debug) {
     console.debug = function (message) {
       process.stdout.write(clc.green("[DEBUG] ") + message + "\n");
-      oldConsole.debug.apply(this, arguments);
+      superConsole.debug.apply(this, arguments);
     };
     console.log = function(message) {
       process.stdout.write(clc.blue("[CONSOLE] ") + message + "\n");
-      oldConsole.log.apply(this, arguments);
+      superConsole.log.apply(this, arguments);
     }
   }
   console.info = function(message) {
     process.stdout.write(clc.blue("[INFO]  ") + message + "\n");
-    oldConsole.info.apply(this, arguments);
+    superConsole.info.apply(this, arguments);
   };
   console.warn = function(message) {
     process.stdout.write(clc.yellow("[WARN]  ") + message + "\n");
-    oldConsole.warn.apply(this, arguments);
+    superConsole.warn.apply(this, arguments);
   };
   console.error = function(message) {
     if (typeof message == "object") {
@@ -136,15 +139,15 @@ if (!isSdkMode() || !options.debug) {
     else {
       process.stderr.write(clc.red("[ERROR] ") + message + "\n");
     }
-    oldConsole.error.apply(this, arguments);
+    superConsole.error.apply(this, arguments);
   };
 }
-
-
 
 /**** Starting (main win) ****/
 
 if (isMainWin()) {
+  console.info("Starting Cesium Desktop {sdk: " + isSdkMode() + "} ...\n");
+
   //const nww = requireNodejs('nw');
   let settingsStr = window.localStorage.getItem('settings');
   let settings = (settingsStr && JSON.parse(settingsStr));
@@ -163,7 +166,7 @@ if (isMainWin()) {
     let quitItem = new gui.MenuItem({
       label: I18N[locale].MENU.QUIT_ITEM,
       click: function() {
-        console.log("[NW] Closing...");
+        console.info("[NW] Closing...");
         gui.App.closeAllWindows();
       },});
     filemenu.append(quitItem);
@@ -173,22 +176,22 @@ if (isMainWin()) {
     }));
 
     // Window
-    var winmenu = new gui.Menu();
+    const winmenu = new gui.Menu();
     let newWinItem = new gui.MenuItem({
       label: I18N[locale].MENU.NEW_WINDOW_ITEM,
       click: function() {
-        console.log("[NW] Opening new window...");
+        console.info("[NW] Opening new window...");
         gui.Window.open("cesium/debug.html");
       },});
     winmenu.append(newWinItem);
 
 
     // Window > Accounts
-    var accountMenu = new gui.Menu();
+    const accountMenu = new gui.Menu();
     let openAccountItem = new gui.MenuItem({
       label: I18N[locale].MENU.OPEN_ACCOUNT||'Wallet 1',
       click: function() {
-        console.log("[NW] Opening wallet 1...");
+        console.info("[NW] Opening wallet 1...");
         gui.Window.open("cesium/debug.html", {
             focus: true
           },
@@ -215,8 +218,8 @@ if (isMainWin()) {
   /**** Checking Cesium keyring file ****/
   let keyringRaw, keyring, keyPairOK;
   let pubkey = settings && window.localStorage.getItem('pubkey');
-  var rememberMe = (!settings && DEFAULT_CESIUM_SETTINGS.rememberMe) || settings.rememberMe == true;
-  var keyringFile = settings && settings.keyringFile || CESIUM_KEYRING;
+  const rememberMe = (!settings && DEFAULT_CESIUM_SETTINGS.rememberMe) || settings.rememberMe == true;
+  const keyringFile = settings && settings.keyringFile || CESIUM_KEYRING;
   if (rememberMe && fs.existsSync(keyringFile)) {
     console.debug("[NW] Keyring file detected at {" + keyringFile + "}...");
 
@@ -265,30 +268,30 @@ if (isMainWin()) {
     keyringRaw = fs.readFileSync(DUNITER_KEYRING);
     keyring = yaml.safeLoad(keyringRaw);
 
-    console.log('Duniter conf = ', duniterConf);
-    console.log('Duniter keyring pubkey = ', keyring.pub);
+    console.debug('Duniter conf:', duniterConf);
+    console.debug('Duniter keyring pubkey:', keyring.pub);
 
     const local_host = duniterConf.ipv4 || duniterConf.ipv6;
     const local_port = duniterConf.port;
 
     let keyPairOK = pubkey && true;
     if (keyPairOK) {
-      console.log('Compte connecté dans Cesium. Comparaison avec celui du nœud local...')
+      console.debug('Detected logged account: comparing with the local Duniter node...')
       keyPairOK = pubkey === keyring.pub;
       if (!keyPairOK) {
-        console.log('Le compte Cesium est différent de celui du nœud.')
+        console.debug('Logged account not same as Duniter node.')
         // Check is need to ask user to use node keyring
         if (settings && settings.askLocalNodeKeyring === false) {
-          console.log("L'utilisateur a demander ultérieurement d'ignorer le basculement sur le nœud local.");
+          console.debug("Do NOT ask to use local node (user ask to ignore this feature)");
           keyPairOK = true;
         }
       } else {
-        console.log('Compte Cesium déjà identique au nœud local.');
+        console.debug('Same account as local node!');
 
         // Configuration de la clef privée, si autorisé dans les paramètres
         const keepAuthSession = !settings || (settings.keepAuthIdle == 9999);
         if (keepAuthSession) {
-          console.debug('Configuring Cesium secret key...');
+          console.debug('Storing Node keypair to session storage...');
           window.sessionStorage.setItem('seckey', keyring.sec);
         }
       }
@@ -296,9 +299,8 @@ if (isMainWin()) {
     if (duniterConf.currency === expectedCurrency
       && (!keyPairOK
         || (settings && settings.node &&
-          (settings.node.host != local_host || settings.node.port != local_port))
+          (settings.node.host !== local_host || settings.node.port != local_port))
       )) {
-
 
       const confirmationMessage = (locale === 'fr') ?
         'Un nœud pour la monnaie ' + expectedCurrency + ' a été détecté sur cet ordinateur, voulez-vous que Cesium s\'y connecte ?' :
@@ -306,7 +308,7 @@ if (isMainWin()) {
 
       if (confirm(confirmationMessage)) {
 
-        console.debug('Configuring Cesium on local node...');
+        console.debug('Make Cesium works on local node...');
 
         // Generate settings, on local node (with node's keyring)
         const keepAuthSession = !settings || (settings.keepAuthIdle == 9999);

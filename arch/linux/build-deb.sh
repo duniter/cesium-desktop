@@ -108,7 +108,6 @@ cp -r /vagrant/yarn.lock "$RELEASES/desktop_release/nw/"
 cp -r /vagrant/node.js "$RELEASES/desktop_release/nw/${PROJECT_NAME}"
 # Injection
 sed -i 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' "$RELEASES/desktop_release/nw/${PROJECT_NAME}/index.html" || exit 1
-sed -i 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' "$RELEASES/desktop_release/nw/${PROJECT_NAME}/debug.html" || exit 1
 
 # Specific desktop dependencies (for reading Duniter conf, ...)
 cd "$RELEASES/desktop_release/nw"

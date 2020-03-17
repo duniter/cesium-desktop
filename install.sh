@@ -103,7 +103,6 @@ if [[ ! -f $ROOT_DIR/src/nw/cesium/index.html ]]; then
     # Add node.js file into HTML files
     cd ${TEMP_DIR}/cesium_unzip || exit 1
     sed -i 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' "index.html" || exit 1
-    sed -i 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' "debug.html" || exit 1
 
     mv * "${ROOT_DIR}/src/nw/cesium/" || exit 1
     cd ..
