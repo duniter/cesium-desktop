@@ -1,5 +1,5 @@
 
-set NW_VERSION=0.42.2
+set NW_VERSION=0.44.4
 set NW_RELEASE=v%NW_VERSION%
 set NW_BASENAME=nwjs
 REM set NW_BASENAME=nwjs-sdk
@@ -37,7 +37,7 @@ if not exist C:\vagrant\%NW_GZ% (
 )
 
 if not exist C:\vagrant\%CESIUM_ZIP% (
-  echo "Telechargement de %CESIUM_ZIP%..."
+  echo "Downloading %CESIUM_ZIP%..."
   powershell -Command "(New-Object System.Net.WebClient).DownloadFile(\"https://github.com/duniter/cesium/releases/download/%CESIUM_TAG%/%CESIUM_ZIP%\", \"C:\vagrant\%CESIUM_ZIP%\")"
 )
 
@@ -56,8 +56,11 @@ call npm install
 
 cd C:\Users\vagrant\cesium_release\cesium
 powershell -Command "(Get-Content C:\Users\vagrant\cesium_release\cesium\index.html) | foreach-object {$_ -replace '<script src=\"config.js\"></script>','<script src=\"config.js\"></script><script src=\"node.js\"></script>' } | Set-Content C:\Users\vagrant\cesium_release\cesium\index.txt"
-
 move index.txt index.html
+del "dist_js/*api.js"
+del "dist_css/*api.css"
+rmdir /s /q "maps"
+rmdir /s /q ".git"
 cd ..
 
 iscc C:\vagrant\cesium.iss /DROOT_PATH=%cd%

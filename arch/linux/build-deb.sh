@@ -11,7 +11,7 @@ export NVM_DIR="$HOME/.nvm"
 # Prepare
 NVER=`node -v`
 TAG=
-NW_VERSION=0.42.2
+NW_VERSION=0.44.4
 NW_RELEASE="v${NW_VERSION}"
 NW_BASENAME=nwjs
 #NW_BASENAME=nwjs-sdk
@@ -81,12 +81,16 @@ rm -rf "$RELEASES"
 mkdir -p "$RELEASES"
 
 cp -r "$DOWNLOADS/${PROJECT_NAME}" "$RELEASES/${PROJECT_NAME}"
-cd "$RELEASES"
 
 # Releases builds
 cd ${RELEASES}/${PROJECT_NAME}
 # Remove git files
 rm -Rf .git
+# Remove unused files (API, maps)
+rm -Rf api
+rm -Rf dist_js/*-api.js
+rm -Rf dist_css/*-api.js
+rm -Rf maps
 
 # -------------------------------------------------
 # Build Desktop version (Nw.js is embedded)
