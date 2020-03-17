@@ -6,7 +6,7 @@ NW_VERSION=0.44.4
 #NW_BASENAME=nwjs
 NW_BASENAME=nwjs-sdk
 CHROMIUM_MAJOR_VERSION=80
-CESIUM_DEFAULT_VERSION=1.5.12
+CESIUM_DEFAULT_VERSION=1.6.0
 
 # Check first arguments = version
 if [[ $1 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ ]];

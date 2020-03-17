@@ -24,7 +24,6 @@ if [[ "${VERSION}" = "DEV" ]]; then
     cp -f ${ROOT}/../../www/index.html ${ROOT}/src/nw/cesium
   fi
 
-
 else
 
   ./install.sh $1
