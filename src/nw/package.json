@@ -1,6 +1,6 @@
 {
   "name": "cesium",
-  "main": "cesium/index.html",
+  "main": "cesium/index.integrity.html",
   "license": "AGPL-3.0",
   "window": {
     "id": "cesium",

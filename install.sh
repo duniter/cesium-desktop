@@ -2,11 +2,11 @@
 
 ROOT_DIR=$PWD
 TEMP_DIR=$PWD/tmp
-NW_VERSION=0.42.2
+NW_VERSION=0.44.4
 #NW_BASENAME=nwjs
 NW_BASENAME=nwjs-sdk
-CHROMIUM_MAJOR_VERSION=78
-CESIUM_DEFAULT_VERSION=1.4.11
+CHROMIUM_MAJOR_VERSION=80
+CESIUM_DEFAULT_VERSION=1.5.12
 
 # Check first arguments = version
 if [[ $1 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ ]];
@@ -31,7 +31,7 @@ fi
 # Force nodejs version to 6
 if [[ -d "${NVM_DIR}" ]]; then
     . ${NVM_DIR}/nvm.sh
-    nvm use 6
+    nvm install 13
 else
     echo "nvm (Node version manager) not found (directory NVM_DIR not defined). Please install nvm, and retry"
     exit 1
@@ -65,6 +65,7 @@ fi
 
 # Instal deps
 cd "${ROOT_DIR}/src/nw"
+npm install -g yarn
 yarn
 
 # Remove old Cesium version

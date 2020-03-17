@@ -11,7 +11,7 @@ const path = requireNodejs('path');
 const yaml = requireNodejs('js-yaml');
 const bs58 = requireNodejs('bs58');
 const clc = requireNodejs('cli-color');
-const gui = requireNodejs('nw.gui');
+const nw = requireNodejs('nw.gui');
 
 Base58 = {
   encode: (bytes) => bs58.encode(new Buffer(bytes)),
@@ -69,17 +69,16 @@ const I18N = {
     }
   }
 };
-const commands = gui && gui.App && gui.App.argv;
+const commands = nw && nw.App && nw.App.argv;
+const win = nw && nw.Window && nw.Window.get();
 const options = {
   debug: false,
   menu: false
 };
 
+process.stderr.write(clc.blue("Starting Cesium Desktop {sdk: " + isSdkMode() + "} ...\n"));
 function isSdkMode () {
-  return gui && (window.navigator.plugins.namedItem('Native Client') !== null);
-}
-function isMainWin() {
-  return (!options.debug && !options.menu) || (gui && gui.Window && gui.Window.get().title && true);
+  return nw && (window.navigator.plugins.namedItem('Native Client') !== null);
 }
 
 /**** Process command line args ****/
@@ -92,7 +91,7 @@ if (commands && commands.length) {
 
         // Open the DEV tool (need a SDK version of NW)
         if (isSdkMode() /*&& isMainWin()*/) {
-          gui.Window.get().showDevTools();
+          win.showDevTools();
         }
         break;
       case "--menu":
@@ -144,7 +143,6 @@ if (!isSdkMode() || !options.debug) {
 }
 
 /**** Starting (main win) ****/
-
 if (isMainWin()) {
   console.info("Starting Cesium Desktop {sdk: " + isSdkMode() + "} ...\n");
 
@@ -159,40 +157,40 @@ if (isMainWin()) {
 
   /**** Menu bar ****/
   if (options.menu) {
-    var menuBar = new gui.Menu({ type: 'menubar' });
+    var menuBar = new nw.Menu({ type: 'menubar' });
 
     // File
-    var filemenu = new gui.Menu();
-    let quitItem = new gui.MenuItem({
+    var filemenu = new nw.Menu();
+    let quitItem = new nw.MenuItem({
       label: I18N[locale].MENU.QUIT_ITEM,
       click: function() {
         console.info("[NW] Closing...");
-        gui.App.closeAllWindows();
+        nw.App.closeAllWindows();
       },});
     filemenu.append(quitItem);
-    menuBar.append(new gui.MenuItem({
+    menuBar.append(new nw.MenuItem({
       label: I18N[locale].MENU.FILE,
       submenu: filemenu
     }));
 
     // Window
-    const winmenu = new gui.Menu();
-    let newWinItem = new gui.MenuItem({
+    const winmenu = new nw.Menu();
+    let newWinItem = new nw.MenuItem({
       label: I18N[locale].MENU.NEW_WINDOW_ITEM,
       click: function() {
         console.info("[NW] Opening new window...");
-        gui.Window.open("cesium/debug.html");
+        nw.Window.open("cesium/debug.html");
       },});
     winmenu.append(newWinItem);
 
 
     // Window > Accounts
-    const accountMenu = new gui.Menu();
-    let openAccountItem = new gui.MenuItem({
+    const accountMenu = new nw.Menu();
+    let openAccountItem = new nw.MenuItem({
       label: I18N[locale].MENU.OPEN_ACCOUNT||'Wallet 1',
       click: function() {
         console.info("[NW] Opening wallet 1...");
-        gui.Window.open("cesium/debug.html", {
+        nw.Window.open("cesium/debug.html", {
             focus: true
           },
           function(win){
@@ -201,17 +199,17 @@ if (isMainWin()) {
           });
       },});
     accountMenu.append(openAccountItem);
-    winmenu.append(new gui.MenuItem({
+    winmenu.append(new nw.MenuItem({
       label: I18N[locale].MENU.ACCOUNTS||'Accounts',
       submenu: accountMenu
     }));
 
-    menuBar.append(new gui.MenuItem({
+    menuBar.append(new nw.MenuItem({
       label: I18N[locale].MENU.WINDOW,
       submenu: winmenu
     }));
 
-    gui.Window.get().menu = menuBar;
+    nw.Window.get().menu = menuBar;
   }
 
 
