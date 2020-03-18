@@ -38,9 +38,10 @@ rm -rf /vagrant/*.tar.gz
 # -----------
 
 cd "${DOWNLOADS}"
+mkdir -p "${DOWNLOADS}/${PROJECT_NAME}"
 
 if [ ! -d "${DOWNLOADS}/${PROJECT_NAME}_src" ]; then
-  mkdir -p "${DOWNLOADS}/${PROJECT_NAME}"
+
   git clone ${REPO_PUBLIC_URL}.git ${PROJECT_NAME}_src
   cd ${PROJECT_NAME}_src
 else
