@@ -98,14 +98,17 @@ if [[ ! -f $ROOT_DIR/src/nw/cesium/index.html ]]; then
         echo "Could not download Cesium web release !"
         exit 1;
     fi
-    unzip "cesium-v${VERSION}-web.zip" -d "${TEMP_DIR}/cesium_unzip" || exit 1
+    unzip -o "cesium-v${VERSION}-web.zip" -d "${TEMP_DIR}/cesium_unzip" || exit 1
     rm "cesium-v${VERSION}-web.zip"
 
     # Add node.js file into HTML files
     cd ${TEMP_DIR}/cesium_unzip || exit 1
-    sed -i 's/<script src="config.js"><\/script>/<script src="config.js"><\/script><script src="node.js"><\/script>/' "index.html" || exit 1
+    sed -i 's/(<script src="config.js"[^>]+><\/script>)/$1 \n<script src="node.js"><\/script>/' index*.html || exit 1
 
-    mv * "${ROOT_DIR}/src/nw/cesium/" || exit 1
+    mv -f * ${ROOT_DIR}/src/nw/cesium/ || exit 1
+    if [[ $? -ne 0 ]]; then
+      exit 1
+    fi
     cd ..
     rmdir cesium_unzip
 fi

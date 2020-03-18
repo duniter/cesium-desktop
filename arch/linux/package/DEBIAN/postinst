@@ -20,12 +20,14 @@ sed -i 's/"cesium"/"cesium-g1-test"/g' package.json
 ln -s "$CESIUM_G1_TEST/nw/nw" /usr/bin/cesium-g1-test
 
 # Change title of Cesium test
+sed -i 's/Cesium/Cesium Ğ1-Test/g' splash.html
 sed -i 's/Cesium/Cesium Ğ1-Test/g' cesium/index.html
 sed -i 's/g1.duniter/g1-test.duniter/g' cesium/config.js
 sed -i 's/g1.data/g1-test.data/g' cesium/config.js
-sed -i 's/"g1"/"g1-test"/g' cesium/node.js
-sed -i 's/.config\/cesium\//.config\/cesium-g1-test\//g' cesium/node.js
+sed -i 's/"g1"/"g1-test"/g' cesium-desktop.js
+sed -i 's/.config\/cesium\//.config\/cesium-g1-test\//g' cesium-desktop.js
 
 # Change title of Cesium classic
 cd "$CESIUM_ROOT/nw/"
+sed -i 's/Cesium/Cesium Ğ1/g' splash.html
 sed -i 's/Cesium/Cesium Ğ1/g' cesium/index.html

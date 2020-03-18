@@ -11,7 +11,8 @@ make)
       [[ $? -eq 0 ]] && echo ">> Copying Cesium Desktop sources..."
       [[ $? -eq 0 ]] && cp ../../src/nw/yarn.lock ./
       [[ $? -eq 0 ]] && cp ../../src/nw/package.json ./
-      [[ $? -eq 0 ]] && cp ../../src/nw/cesium/node.js ./
+      [[ $? -eq 0 ]] && cp ../../src/nw/cesium-desktop.js ./
+      [[ $? -eq 0 ]] && cp ../../src/nw/splash.html ./
       [[ $? -eq 0 ]] && echo ">> Starting Vagrant Ubuntu VM..."
       [[ $? -eq 0 ]] && vagrant up
       [[ $? -eq 0 ]] && echo ">> VM: building Cesium..."
