@@ -52,11 +52,12 @@ call 7z x C:\vagrant\%CESIUM_ZIP%
 cd ..
 xcopy C:\vagrant\LICENSE.txt .\ /s /e
 xcopy C:\vagrant\package.json .\ /s /e
-xcopy C:\vagrant\node.js .\cesium\ /s /e
+xcopy C:\vagrant\cesium-desktop.js .\ /s /e
+xcopy C:\vagrant\splash.html .\ /s /e
 call npm install
 
 cd C:\Users\vagrant\cesium_release\cesium
-powershell -Command "(Get-Content C:\Users\vagrant\cesium_release\cesium\index.html) | foreach-object {$_ -replace '<script src=\"config.js\"></script>','<script src=\"config.js\"></script><script src=\"node.js\"></script>' } | Set-Content C:\Users\vagrant\cesium_release\cesium\index.txt"
+powershell -Command "(Get-Content C:\Users\vagrant\cesium_release\cesium\index.html) | foreach-object {$_ -replace '<script src=\"config.js\"></script>','<script src=\"config.js\"></script><script src=\"../cesium-desktop.js\"></script>' } | Set-Content C:\Users\vagrant\cesium_release\cesium\index.txt"
 move index.txt index.html
 del "dist_js/*api.js"
 del "dist_css/*api.css"
