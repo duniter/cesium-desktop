@@ -4,8 +4,8 @@
 export NVM_DIR="$HOME/.nvm"
 [[ -s "/usr/local/opt/nvm/nvm.sh" ]] && \. "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
 
-# Install or update node.js v6
-nvm install 5
+# Install or update node.js v10
+nvm install 10
 
 # Prepare
 NVER=`node -v`

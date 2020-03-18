@@ -1,5 +1,5 @@
 
-set NW_VERSION=0.44.4
+set NW_VERSION=0.42.2
 set NW_RELEASE=v%NW_VERSION%
 set NW_BASENAME=nwjs
 REM set NW_BASENAME=nwjs-sdk

@@ -27,11 +27,11 @@ if [[ ! -f ${HOME}/.bash_profile ]]; then
 fi
 
 # Node.js
-nvm install 6
+nvm install 10
 if [[ $? -ne 0 ]]; then exit 2; fi
 
 # node-pre-gyp
-npm install -g nw-gyp node-pre-gyp
+npm install -g nw-gyp node-pre-gyp yarn
 if [[ $? -ne 0 ]]; then exit 2; fi
 
 # Make sure XCode XIP file exists
