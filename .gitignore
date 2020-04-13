@@ -23,7 +23,6 @@ src/nw/payload*
 src/nw/yarn.lock
 src/nw/package-lock.json
 src/nw/cesium
-!src/nw/cesium/node.js
 src/nw/swiftshader/libEGL.so
 src/nw/swiftshader/libGLESv2.so
 

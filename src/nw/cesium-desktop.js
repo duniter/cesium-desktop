@@ -523,7 +523,7 @@ initLogger(options);
 
 // Splash screen: start the app
 if (isSplashScreen()) {
-  setTimeout(() => startApp(options), 500);
+  setTimeout(() => startApp(options), 1000);
 }
 
 // Main window: add menu

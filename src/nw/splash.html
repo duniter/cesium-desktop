@@ -9,18 +9,20 @@
     <link rel="stylesheet" href="cesium/dist_css/cesium.css">
 
   </head>
-  <body style="background-color: rgba(26, 35, 126, 0.7) !important;">
-      <ion-nav-view>
-        <div class="loader">
-          <h3 style="text-align: center; padding-top: 25px; color: whitesmoke;"><b>Cesium</b></h3>
-          <h4 style="text-align: center; color: whitesmoke;"><i class="icon ion-load-a"></i></h4>
-        </div>
-      </ion-nav-view>
+  <body style="background-color: rgba(26, 35, 126, 0.7) !important; display: flex; flex-direction: column; align-content: center;">
+      <img src="cesium/img/logo_128px.png" style="position: absolute; top: 10px; right: 10px; z-index: 9999;">
+      <img src="cesium/img/logo_g1_32px.png" style="position: absolute; top: 30px; right: 100px; z-index: 9999;">
+
+      <div style="flex: 1 1 auto;">&nbsp;</div>
+      <img src="splash.png" style="max-height: 80%; align-self: center;">
+
+      <div style="flex: 1 1 auto;"></div>
+
+      <script src="cesium-desktop.js"></script>
+
 
       <!-- Preload JS files here -->
       <script src="cesium/dist_js/cesium.js" async></script>
       <script src="cesium/dist_js/vendor.js" async></script>
-
-      <script src="cesium-desktop.js"></script>
   </body>
 </html>
