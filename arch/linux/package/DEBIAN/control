@@ -8,5 +8,5 @@ Maintainer: Duniter Team <contact@duniter.org>
 Description: Cesium Wallet for G1 currency
  Cesium is a wallet (client-software) for G1 a libre currency.
  Please visit https://www.duniter.org for more information on G1 and libre currencies.
-Depends: libgconf-2-4 (>= 3.2.0)
+Depends: libgconf-2-4 (>= 3.2.0), libatomic1
 Homepage: https://www.cesium.app
