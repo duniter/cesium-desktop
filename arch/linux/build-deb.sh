@@ -13,8 +13,8 @@ NVER=$(node -v)
 TAG=
 NW_VERSION=0.42.2
 NW_RELEASE="v${NW_VERSION}"
-NW_BASENAME=nwjs
-#NW_BASENAME=nwjs-sdk
+#NW_BASENAME=nwjs
+NW_BASENAME=nwjs-sdk
 NW="${NW_BASENAME}-${NW_RELEASE}-linux-x64"
 NW_GZ="${NW}.tar.gz"
 

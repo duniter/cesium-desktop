@@ -100,7 +100,7 @@ for asset in $EXPECTED_ASSETS; do
         ./scripts/build.sh make linux $TAG
         DEB_PATH="$PWD/arch/linux/$asset"
         if [[ $? -eq 0 ]] && [[ -f "${DEB_PATH}" ]]; then
-          node ./scripts/upload-release.js ${REMOTE_TAG} ${DEB_PATH}
+          #node ./scripts/upload-release.js ${REMOTE_TAG} ${DEB_PATH}
         fi
       else
         echo "This computer cannot build this asset, required architecture is 'x86_64'. Skipping."

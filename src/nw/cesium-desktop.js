@@ -137,11 +137,14 @@ function consoleToStdout(options) {
         if (i === 1) process.stdout.write('\t');
 
         const argument = arguments[i];
-        if (typeof argument !== "string") {
-          process.stdout.write(JSON.stringify(argument));
+        if (typeof argument === "object" && argument.stack) {
+          process.stdout.write(JSON.stringify(argument.stack));
+        }
+        else if (typeof argument === "string") {
+          process.stdout.write(argument);
         }
         else {
-          process.stdout.write(argument);
+          process.stdout.write(JSON.stringify(argument));
         }
       }
     }
@@ -196,10 +199,13 @@ function initLogger(options) {
 function loadSettings(options) {
   if (options && options.settings) return; // Skip, already filled
 
+  console.debug("[splash] Getting settings from the local storage...");
+
   let settingsStr = window.localStorage.getItem('settings');
   options.settings = (settingsStr && JSON.parse(settingsStr));
   options.locale = (options.settings && options.settings.locale && options.settings.locale.id).split('-')[0] || options.locale || 'en';
 }
+
 /**
  * Add menu bar to a window
  * @param win
@@ -297,8 +303,8 @@ function addMenu(subWin, options) {
 }
 
 function prepareSettings(options) {
-  options = options || getArgs();
   console.info("[splash] Preparing settings...");
+  options = options || getArgs();
 
   let settings = options.settings;
   let locale = options.locale || 'en';
@@ -508,7 +514,7 @@ function startApp(options) {
     openMainWindow(options);
   }
   catch (err) {
-    console.error(err);
+    console.error("[splash] Error while trying to launch Cesium: " + (err && err.message || err || ''), err);
   }
 
   setTimeout(() => win.close(), 500);
