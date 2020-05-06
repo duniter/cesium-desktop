@@ -7,47 +7,35 @@ tmp
 .idea
 .local
 
-src/nw/lib
-src/nw/locales
-src/nw/node_modules
-src/nw/pnacl
-src/nw/nw*
-src/nw/*.bin
-src/nw/chromedriver
-src/nw/credits.html
-src/nw/*.dat
-src/nw/*.pak
-src/nw/nacl*
-src/nw/minidump*
-src/nw/payload*
-src/nw/yarn.lock
-src/nw/package-lock.json
-src/nw/cesium
-src/nw/swiftshader/libEGL.so
-src/nw/swiftshader/libGLESv2.so
+www
 
 arch/linux/.vagrant
 arch/linux/cesium-*
-arch/linux/*.js*
-arch/linux/yarn*
+arch/linux/splash.html
+arch/linux/package.json
+arch/linux/yarn.lock
+arch/linux/LICENSE.txt
 arch/linux/ubuntu*
 arch/linux/nw*
 
 arch/windows/.vagrant
 arch/windows/cesium-*
-arch/windows/*.js*
-arch/windows/yarn*
-arch/windows/ubuntu*
-arch/windows/nw*
+arch/windows/splash.html
+arch/windows/package.json
+arch/windows/yarn.lock
+arch/windows/LICENSE.txt
 arch/windows/LICENSE.txt
 arch/windows/*.box
 arch/windows/.directory
 
 arch/osx/.vagrant
 arch/osx/cesium-*
-arch/osx/yarn.*
+arch/osx/splash.html
+arch/osx/package.json
+arch/osx/yarn.lock
+arch/osx/LICENSE.txt
 arch/osx/*.xip
 arch/osx/*.box
 arch/osx/*.dmg
 
-desktop
+downloads

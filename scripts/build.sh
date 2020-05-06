@@ -9,10 +9,8 @@ make)
     cd arch/linux
     if [[ ! -f "cesium-desktop-v$TAG-linux-x64.deb" ]]; then
       [[ $? -eq 0 ]] && echo ">> Copying Cesium Desktop sources..."
-      [[ $? -eq 0 ]] && cp ../../src/nw/yarn.lock ./
-      [[ $? -eq 0 ]] && cp ../../src/nw/package.json ./
-      [[ $? -eq 0 ]] && cp ../../src/nw/cesium-desktop.js ./
-      [[ $? -eq 0 ]] && cp ../../src/nw/splash.html ./
+      [[ $? -eq 0 ]] && cp ../../src/* ./
+      [[ $? -eq 0 ]] && cp ../../LICENSE ./LICENSE.txt
       [[ $? -eq 0 ]] && echo ">> Starting Vagrant Ubuntu VM..."
       [[ $? -eq 0 ]] && vagrant up
       [[ $? -eq 0 ]] && echo ">> VM: building Cesium..."
@@ -33,10 +31,8 @@ make)
     cd arch/windows
     if [[ ! -f "cesium-desktop-v$TAG-windows-x64.exe" ]]; then
       [[ $? -eq 0 ]] && echo ">> Copying Cesium Desktop sources..."
-      [[ $? -eq 0 ]] && cp ../../src/nw/package.json ./
-      [[ $? -eq 0 ]] && cp ../../src/nw/LICENSE.txt ./
-      [[ $? -eq 0 ]] && cp ../../src/nw/cesium-desktop.js ./
-      [[ $? -eq 0 ]] && cp ../../src/nw/splash.html ./
+      [[ $? -eq 0 ]] && cp ../../src/* ./
+      [[ $? -eq 0 ]] && cp ../../LICENSE ./LICENSE.txt
       # Win build need a copy of the web asset (download in build.bat failed)
       [[ $? -eq 0 ]] && cp "../../downloads/cesium-v$TAG-web.zip" ./
       # Download box locally
@@ -60,10 +56,9 @@ make)
     cd arch/osx
     if [[ ! -f "cesium-desktop-v$TAG-osx-x64.zip" ]]; then
       [[ $? -eq 0 ]] && echo ">> Copying Cesium Desktop sources..."
-      [[ $? -eq 0 ]] && cp ../../src/nw/package.json ./
-      [[ $? -eq 0 ]] && cp ../../src/nw/cesium-desktop.js ./
-      [[ $? -eq 0 ]] && cp ../../src/nw/splash.html ./
-      # OSx need a copy of the web asset  (download in build-osx.sh failed)
+      [[ $? -eq 0 ]] && cp ../../src/* ./
+      [[ $? -eq 0 ]] && cp ../../LICENSE ./LICENSE.txt
+      # Copy web asset (download in build-osx.sh failed)
       [[ $? -eq 0 ]] && cp "../../downloads/cesium-v$TAG-web.zip" ./
       # Download box locally
       #if [[ $? -eq 0 && ! -f ./osx-10.14.box ]]; then
@@ -91,9 +86,12 @@ make)
       echo ">> OSx binaries already built. Ready for upload."
     fi
     ;;
-ios)
+  ios)
     cd arch/osx
     if [[ ! -f "cesium-v$TAG-ios.zip" ]]; then
+      [[ $? -eq 0 ]] && echo ">> Copying Cesium Desktop sources..."
+      [[ $? -eq 0 ]] && cp ../../src/* ./
+      [[ $? -eq 0 ]] && cp ../../LICENSE ./LICENSE.txt
       [[ $? -eq 0 ]] && echo ">> Starting Vagrant OSx VM..."
       [[ $? -eq 0 ]] && vagrant up --provision
       [[ $? -eq 0 ]] && echo ">> Building Cesium for iOS..."

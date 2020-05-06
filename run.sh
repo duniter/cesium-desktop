@@ -1,35 +1,31 @@
 #!/bin/bash
 
-ROOT=`pwd`
+PROJECT_DIR=$(pwd)
 VERSION=$1
 if [[ "${VERSION}" = "DEV" ]]; then
   # Installing default version
   ./install.sh
-  if [[ ! $? -eq 0 ]]; then
-    exit -1;
-  fi
+  [[ ! $? -eq 0 ]] && exit 1
 
   # Copying DEV files
-  if [[ -d "${ROOT}/../../www/dist" ]]; then
+  if [[ -d "${PROJECT_DIR}/../../www/dist" ]]; then
     echo "Copying DEV files..."
-    mkdir -p ${ROOT}/src/nw/cesium/dist
-    mkdir -p ${ROOT}/src/nw/cesium/js
-    cp -rf ${ROOT}/../../www/dist/dist_js ${ROOT}/src/nw/cesium/dist
-    cp -rf ${ROOT}/../../www/dist/dist_css ${ROOT}/src/nw/cesium/dist
-    cp -rf ${ROOT}/../../www/js/vendor ${ROOT}/src/nw/cesium/js
-    cp -rf ${ROOT}/../../www/css ${ROOT}/src/nw/cesium
-    cp -rf ${ROOT}/../../www/img ${ROOT}/src/nw/cesium
-    cp -rf ${ROOT}/../../www/lib ${ROOT}/src/nw/cesium
-    cp -rf ${ROOT}/../../www/license ${ROOT}/src/nw/cesium
-    cp -f ${ROOT}/../../www/index.html ${ROOT}/src/nw/cesium
+    mkdir -p ${PROJECT_DIR}/www/cesium
+    mkdir -p ${PROJECT_DIR}/www/cesium/js
+    cp -rf ${PROJECT_DIR}/../../www/dist/dist_js ${PROJECT_DIR}/www/cesium/dist
+    cp -rf ${PROJECT_DIR}/../../www/dist/dist_css ${PROJECT_DIR}/www/cesium/dist
+    cp -rf ${PROJECT_DIR}/../../www/js/vendor ${PROJECT_DIR}/www/cesium/js
+    cp -rf ${PROJECT_DIR}/../../www/css ${PROJECT_DIR}/www/cesium
+    cp -rf ${PROJECT_DIR}/../../www/img ${PROJECT_DIR}/www/cesium
+    cp -rf ${PROJECT_DIR}/../../www/lib ${PROJECT_DIR}/www/cesium
+    cp -rf ${PROJECT_DIR}/../../www/license ${PROJECT_DIR}/www/cesium
+    cp -f ${PROJECT_DIR}/../../www/index.html ${PROJECT_DIR}/www/cesium
   fi
 
 else
 
   ./install.sh $1
-  if [[ ! $? -eq 0 ]]; then
-    exit 1;
-  fi
+  [[ ! $? -eq 0 ]] && exit 1
 fi
 
-./src/nw/nw $2 $3
+./www/nw $2 $3

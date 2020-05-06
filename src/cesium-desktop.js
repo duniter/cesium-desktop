@@ -80,13 +80,13 @@ const I18N = {
 const win = gui && gui.Window && gui.Window.get();
 
 function isSdkMode () {
-  return gui && (window.navigator.plugins.namedItem('Native Client') !== null) && win.showDevTools;
+  return gui && typeof win.showDevTools === 'function';
 }
-function isMainWin() {
+function isMainWin(win) {
   return win && win.title === "Cesium" && true;
 }
-function isSplashScreen() {
-  return (win && win.title === "");
+function isSplashScreen(win) {
+  return (win && win.title === "Cesium loading...");
 }
 
 /**
@@ -138,7 +138,7 @@ function consoleToStdout(options) {
 
         const argument = arguments[i];
         if (typeof argument === "object" && argument.stack) {
-          process.stdout.write(JSON.stringify(argument.stack));
+          process.stdout.write(argument.stack);
         }
         else if (typeof argument === "string") {
           process.stdout.write(argument);
@@ -185,7 +185,10 @@ function initLogger(options) {
   options = options || getArgs();
 
   if (options.debug) {
-    if (!options.sdk || options.menu) {
+    if (options.sdk && options.menu) {
+      // SDK enable: not need to redirect debug
+    }
+    else {
       // Re-routing console log
       consoleToStdout(options);
     }
@@ -196,10 +199,23 @@ function initLogger(options) {
   }
 }
 
+function openDebugger(subWin) {
+  subWin = subWin || win;
+  if (isSdkMode()) {
+    try {
+      console.info("[desktop] Opening debugger...");
+      subWin.showDevTools();
+    }
+    catch(err) {
+      console.error("[desktop] Cannot open debugger:", err);
+    }
+  }
+}
+
 function loadSettings(options) {
   if (options && options.settings) return; // Skip, already filled
 
-  console.debug("[splash] Getting settings from the local storage...");
+  console.debug("[desktop] Getting settings from the local storage...");
 
   let settingsStr = window.localStorage.getItem('settings');
   options.settings = (settingsStr && JSON.parse(settingsStr));
@@ -222,7 +238,7 @@ function addMenu(subWin, options) {
   }
   const locale = options.locale || 'en';
 
-  console.debug("[splash] Adding menu...");
+  console.debug("[desktop] Adding menu...");
 
   var menuBar = new gui.Menu({ type: 'menubar' });
 
@@ -231,7 +247,7 @@ function addMenu(subWin, options) {
   let quitItem = new gui.MenuItem({
     label: I18N[locale].MENU.QUIT_ITEM,
     click: function() {
-      console.info("[splash] Closing...");
+      console.info("[desktop] Closing...");
       gui.App.closeAllWindows();
     },});
   filemenu.append(quitItem);
@@ -262,7 +278,7 @@ function addMenu(subWin, options) {
 
           const pubkey = '38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE'; // TODO: get it from storage ?
 
-          console.info("[splash] Opening new window, for wallet {"+ pubkey.substr(0,8) +"}...");
+          console.info("[desktop] Opening new window, for wallet {"+ pubkey.substr(0,8) +"}...");
 
           openSecondaryWindow({
               id: 'cesium-' + pubkey,
@@ -284,10 +300,8 @@ function addMenu(subWin, options) {
     if (options.sdk) {
       let debugWinItem = new gui.MenuItem({
         label: I18N[locale].MENU.OPEN_DEBUG_TOOL,
-        click: function() {
-          console.info("[splash] Opening debugger...");
-          win.showDevTools();
-        },});
+        click: () => openDebugger()
+      });
       winmenu.append(debugWinItem);
     }
 
@@ -303,7 +317,7 @@ function addMenu(subWin, options) {
 }
 
 function prepareSettings(options) {
-  console.info("[splash] Preparing settings...");
+  console.info("[desktop] Preparing settings...");
   options = options || getArgs();
 
   let settings = options.settings;
@@ -315,14 +329,14 @@ function prepareSettings(options) {
   const rememberMe = (!settings && DEFAULT_CESIUM_SETTINGS.rememberMe) || settings.rememberMe == true;
   const keyringFile = settings && settings.keyringFile || CESIUM_KEYRING;
   if (rememberMe && fs.existsSync(keyringFile)) {
-    console.debug("[splash] Keyring file detected at {" + keyringFile + "}...");
+    console.debug("[desktop] Keyring file detected at {" + keyringFile + "}...");
 
     keyringRaw = fs.readFileSync(keyringFile);
     keyring = yaml.safeLoad(keyringRaw);
 
     keyPairOK = keyring.pub && keyring.sec && true;
     if (!keyPairOK) {
-      console.warn("[splash] Invalid keyring file: missing 'pub' or 'sec' field! Skipping auto-login.");
+      console.warn("[desktop] Invalid keyring file: missing 'pub' or 'sec' field! Skipping auto-login.");
       // Store settings
       settings = settings || DEFAULT_CESIUM_SETTINGS;
       if (settings.keyringFile) {
@@ -330,23 +344,23 @@ function prepareSettings(options) {
         window.localStorage.setItem('settings', JSON.stringify(settings));
       }
     } else {
-      console.debug("[splash] Auto-login user on {" + keyring.pub + "}");
+      console.debug("[desktop] Auto-login user on {" + keyring.pub + "}");
       window.localStorage.setItem('pubkey', keyring.pub);
       const keepAuthSession = !settings || (settings.keepAuthIdle == 9999);
       if (keepAuthSession) {
-        console.debug("[splash] Auto-authenticate on account (using keyring file)");
+        console.debug("[desktop] Auto-authenticate on account (using keyring file)");
         window.sessionStorage.setItem('seckey', keyring.sec);
       }
 
       // Store settings
       settings = settings || DEFAULT_CESIUM_SETTINGS;
-      if (!settings.keyringFile || settings.keyringFile != keyringFile) {
+      if (!settings.keyringFile || settings.keyringFile !== keyringFile) {
         settings.keyringFile = keyringFile;
         window.localStorage.setItem('settings', JSON.stringify(settings));
       }
     }
   } else if (settings && settings.keyringFile) {
-    console.warn("[splash] Unable to found keyring file define in Cesium settings. Skipping auto-login");
+    console.warn("[desktop] Unable to found keyring file define in Cesium settings. Skipping auto-login");
     // Store settings
     settings = settings || DEFAULT_CESIUM_SETTINGS;
     if (settings.keyringFile) {
@@ -362,30 +376,30 @@ function prepareSettings(options) {
     keyringRaw = fs.readFileSync(DUNITER_KEYRING);
     keyring = yaml.safeLoad(keyringRaw);
 
-    console.debug('[splash] Checking Duniter node config, at ' + DUNITER_CONF + ':', duniterConf);
-    console.debug('[splash] Checking Duniter node pubkey, at ' + DUNITER_KEYRING+ ':', keyring.pub);
+    console.debug('[desktop] Checking Duniter node config, at ' + DUNITER_CONF + ':', duniterConf);
+    console.debug('[desktop] Checking Duniter node pubkey, at ' + DUNITER_KEYRING+ ':', keyring && keyring.pub);
 
-    const local_host = duniterConf.ipv4 || duniterConf.ipv6;
+    const local_host = (duniterConf.ipv4 || duniterConf.ipv6);
     const local_port = duniterConf.port;
 
     let keyPairOK = pubkey && true;
     if (keyPairOK) {
-      console.debug('[splash] Detected logged account: comparing with the local Duniter node...')
+      console.debug('[desktop] Detected logged account: comparing with the local Duniter node...')
       keyPairOK = pubkey === keyring.pub;
       if (!keyPairOK) {
-        console.debug('[splash] Logged account not same as Duniter node.')
+        console.debug('[desktop] Logged account not same as Duniter node.')
         // Check is need to ask user to use node keyring
         if (settings && settings.askLocalNodeKeyring === false) {
-          console.debug("[splash] Do NOT ask to use local node (user ask to ignore this feature)");
+          console.debug("[desktop] Do NOT ask to use local node (user ask to ignore this feature)");
           keyPairOK = true;
         }
       } else {
-        console.debug('[splash] Same account as local node!');
+        console.debug('[desktop] Same account as local node!');
 
         // Configuration de la clef privée, si autorisé dans les paramètres
         const keepAuthSession = !settings || (settings.keepAuthIdle == 9999);
         if (keepAuthSession) {
-          console.debug('[splash] Storing Node keypair to session storage...');
+          console.debug('[desktop] Storing Node keypair to session storage...');
           window.sessionStorage.setItem('seckey', keyring.sec);
         }
       }
@@ -402,7 +416,7 @@ function prepareSettings(options) {
 
       if (confirm(confirmationMessage)) {
 
-        console.debug('[splash] Make Cesium works on local node...');
+        console.debug('[desktop] Make Cesium works on local node...');
 
         // Generate settings, on local node (with node's keyring)
         const keepAuthSession = !settings || (settings.keepAuthIdle == 9999);
@@ -429,14 +443,14 @@ function prepareSettings(options) {
         // Store pubkey and seckey (if allowed)
         window.localStorage.setItem('pubkey', keyring.pub);
         if (keepAuthSession) {
-          console.debug('[splash] Configuring Cesium secret key...');
+          console.debug('[desktop] Configuring Cesium secret key...');
           window.sessionStorage.setItem('seckey', keyring.sec);
         }
       }
 
       // Do Not ask again
       else {
-        console.debug('[splash] User not need to connect on local node. Configuring Cesium to remember this choice...');
+        console.debug('[desktop] User not need to connect on local node. Configuring Cesium to remember this choice...');
         settings = settings || DEFAULT_CESIUM_SETTINGS;
         settings.askLocalNodeKeyring = false;
         window.localStorage.setItem('settings', JSON.stringify(settings));
@@ -459,7 +473,7 @@ function openNewWindow(options, callback) {
     focus: true,
     ...options
   };
-  console.debug("[splash] Opening window {id: '"+ options.id + "', title: '"+ options.title +"'} ...");
+  console.debug("[desktop] Opening window {id: '"+ options.id + "', title: '"+ options.title +"'} ...");
   gui.Window.open('cesium/index.html', {
     id: options.id,
     title: options.title,
@@ -474,10 +488,6 @@ function openNewWindow(options, callback) {
 }
 
 function openMainWindow(options, callback) {
-  options = {
-    id: "cesium",
-    ...options
-  };
   openNewWindow({
     id: "cesium",
     ...options
@@ -498,26 +508,37 @@ function openSecondaryWindow(options, callback) {
 function startApp(options) {
   options = options || getArgs();
 
-  if (options.debug && options.sdk) {
-    win.showDevTools();
+  if (options.debug) {
+    openDebugger(win);
   }
 
   try {
-    console.info("[splash] Launching Cesium...", options);
+    console.info("[desktop] Launching Cesium...", options);
 
     loadSettings(options);
-    console.info("[splash] User home:  ", options.home);
-    console.info("[splash] User locale:", options.locale);
+
+    console.info("[desktop] User home:  ", options.home);
+    console.info("[desktop] User locale:", options.locale);
 
     prepareSettings(options);
 
     openMainWindow(options);
+
+    setTimeout(() => win.close(), 1000);
   }
   catch (err) {
-    console.error("[splash] Error while trying to launch Cesium: " + (err && err.message || err || ''), err);
+    console.error("[desktop] Error while trying to launch Cesium: " + (err && err.message || err || ''), err);
+
+    if (options.debug && options.sdk) {
+      // Keep open, if debugger open
+    }
+    else {
+      // Close the splash screen
+      setTimeout(() => win.close());
+    }
   }
 
-  setTimeout(() => win.close(), 500);
+
 }
 
 // -- MAIN --
@@ -528,15 +549,22 @@ const options = getArgs();
 initLogger(options);
 
 // Splash screen: start the app
-if (isSplashScreen()) {
+if (isSplashScreen(win)) {
   setTimeout(() => startApp(options), 1000);
 }
 
 // Main window: add menu
-else if (isMainWin()) {
+else if (isMainWin(win)) {
 
   if (options.menu) {
     addMenu(win, options);
   }
+
+  if (options.debug) {
+    openDebugger(win);
+  }
+}
+else {
+  console.warn("[desktop] Unknown window title: " + (win && win.title || 'undefined'));
 }
 

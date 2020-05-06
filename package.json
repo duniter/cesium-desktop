@@ -1,10 +1,25 @@
 {
+  "name": "cesium-desktop",
   "license": "AGPL-3.0",
+  "scripts": {
+    "clean": "trash www",
+    "start": "./run.sh",
+    "build": "./release.sh"
+  },
+  "keywords": [
+    "duniter",
+    "cesium",
+    "g1",
+    "desktop",
+    "angularjs",
+    "crypto-currency"
+  ],
+  "readmeFilename": "README.md",
   "dependencies": {
     "bs58": "^4.0.1",
-    "co": "^4.6.0",
-    "js-yaml": "^3.13.1",
     "cli-color": "^2.0.0",
+    "js-yaml": "^3.13.1",
+    "co": "^4.6.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "stringstream": "^0.0.6"

@@ -1,0 +1,25 @@
+{
+  "name": "cesium",
+  "main": "splash.html",
+  "license": "AGPL-3.0",
+  "window": {
+    "id": "splash",
+    "icon": "cesium/img/logo.png",
+    "min_width": 640,
+    "min_height": 480,
+    "max_width": 640,
+    "max_height": 480,
+    "position": "center",
+    "frame": false,
+    "title": "Cesium loading..."
+  },
+  "dependencies": {
+    "bs58": "^4.0.1",
+    "cli-color": "^2.0.0",
+    "js-yaml": "^3.13.1",
+    "co": "^4.6.0",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.5",
+    "stringstream": "^0.0.6"
+  }
+}
