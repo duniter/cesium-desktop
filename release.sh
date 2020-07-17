@@ -30,7 +30,16 @@ if [[ -z $TAG ]]; then
   exit 1
 fi
 
-# Force nodejs version to 6
+# Override with a local file, if any
+if [[ -f "${ROOT}/.local/env.sh" ]]; then
+  echo "Loading environment variables from: '.local/env.sh'"
+  source ${ROOT}/.local/env.sh
+  [[ $? -ne 0 ]] && exit 1
+else
+  echo "No file '${ROOT}/.local/env.sh' found. Will use defaults"
+fi
+
+# Force nodejs version
 if [[ -d "${NVM_DIR}" ]]; then
     . ${NVM_DIR}/nvm.sh
     nvm use ${NODEJS_VERSION}
