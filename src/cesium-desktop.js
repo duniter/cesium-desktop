@@ -219,7 +219,8 @@ function loadSettings(options) {
 
   let settingsStr = window.localStorage.getItem('settings');
   options.settings = (settingsStr && JSON.parse(settingsStr));
-  options.locale = (options.settings && options.settings.locale && options.settings.locale.id).split('-')[0] || options.locale || 'en';
+  const localeId = options.settings && options.settings.locale && options.settings.locale.id;
+  options.locale = localeId && localeId.split('-')[0] || options.locale || 'en';
 }
 
 /**
