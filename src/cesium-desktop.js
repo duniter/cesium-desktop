@@ -2,16 +2,14 @@
 requireNodejs = require;
 require = undefined;
 
-const expectedCurrency = "g1";
-
 /**** NODEJS MODULES ****/
 
-const fs = requireNodejs('fs');
-const path = requireNodejs('path');
-const yaml = requireNodejs('js-yaml');
-const bs58 = requireNodejs('bs58');
-const clc = requireNodejs('cli-color');
-const gui = requireNodejs('nw.gui');
+const fs = requireNodejs('fs'),
+  path = requireNodejs('path'),
+  yaml = requireNodejs('js-yaml'),
+  bs58 = requireNodejs('bs58'),
+  clc = requireNodejs('cli-color'),
+  gui = requireNodejs('nw.gui');
 
 Base58 = {
   encode: (bytes) => bs58.encode(new Buffer(bytes)),
@@ -19,13 +17,19 @@ Base58 = {
 };
 
 /**** Program ****/
+const expectedCurrency = "g1";
+
+const APP_ID = "cesium";
+const APP_NAME = "Cesium";
 const HOME = requireNodejs('os').homedir();
-const CESIUM_HOME = path.resolve(HOME, '.config/cesium/');
-const CESIUM_KEYRING = path.resolve(CESIUM_HOME, 'keyring.yml');
+const APP_HOME = path.resolve(HOME, path.join('.config', APP_ID));
+const APP_KEYRING = path.resolve(APP_HOME, 'keyring.yml');
+const HAS_SPLASH_SCREEN=false;
+const SPLASH_SCREEN_TITLE = APP_NAME + " loading..."; // WARN: must be same as manifest.json title
 const DUNITER_HOME = path.resolve(HOME, '.config/duniter/duniter_default');
 const DUNITER_CONF = path.resolve(DUNITER_HOME, 'conf.json');
 const DUNITER_KEYRING = path.resolve(DUNITER_HOME, 'keyring.yml');
-const DEFAULT_CESIUM_SETTINGS = {
+const DEFAULT_SETTINGS = {
   "useRelative": false,
   "timeWarningExpire": 2592000,
   "useLocalStorage": true,
@@ -83,10 +87,10 @@ function isSdkMode () {
   return gui && typeof win.showDevTools === 'function';
 }
 function isMainWin(win) {
-  return win && win.title === "Cesium" && true;
+  return win && win.title === APP_NAME && true;
 }
 function isSplashScreen(win) {
-  return (win && win.title === "Cesium loading...");
+  return (win && win.title === SPLASH_SCREEN_TITLE);
 }
 
 /**
@@ -96,19 +100,22 @@ function isSplashScreen(win) {
  */
 function getArgs() {
   const options = {
-    debug: false,
+    verbose: false,
     menu: false,
-    sdk: isSdkMode()
+    debug: false
   };
   const commands = gui && gui.App && gui.App.argv;
   if (commands && commands.length) {
     for (let i in commands) {
       switch (commands[i]) {
-        case "--debug":
-          options.debug = true;
+        case "--verbose":
+          options.verbose = true;
           break;
         case "--menu":
           options.menu = true;
+          break;
+        case "--debug":
+          options.debug = true && isSdkMode();
           break;
       }
     }
@@ -184,8 +191,8 @@ function consoleToStdout(options) {
 function initLogger(options) {
   options = options || getArgs();
 
-  if (options.debug) {
-    if (options.sdk && options.menu) {
+  if (options.verbose) {
+    if (options.debug) {
       // SDK enable: not need to redirect debug
     }
     else {
@@ -324,11 +331,11 @@ function prepareSettings(options) {
   let settings = options.settings;
   let locale = options.locale || 'en';
 
-  /**** Checking Cesium keyring file ****/
+  /**** Checking app keyring file ****/
   let keyringRaw, keyring, keyPairOK;
   let pubkey = settings && window.localStorage.getItem('pubkey');
-  const rememberMe = (!settings && DEFAULT_CESIUM_SETTINGS.rememberMe) || settings.rememberMe == true;
-  const keyringFile = settings && settings.keyringFile || CESIUM_KEYRING;
+  const rememberMe = (!settings && DEFAULT_SETTINGS.rememberMe) || settings.rememberMe == true;
+  const keyringFile = settings && settings.keyringFile || APP_KEYRING;
   if (rememberMe && fs.existsSync(keyringFile)) {
     console.debug("[desktop] Keyring file detected at {" + keyringFile + "}...");
 
@@ -339,7 +346,7 @@ function prepareSettings(options) {
     if (!keyPairOK) {
       console.warn("[desktop] Invalid keyring file: missing 'pub' or 'sec' field! Skipping auto-login.");
       // Store settings
-      settings = settings || DEFAULT_CESIUM_SETTINGS;
+      settings = settings || DEFAULT_SETTINGS;
       if (settings.keyringFile) {
         delete settings.keyringFile;
         window.localStorage.setItem('settings', JSON.stringify(settings));
@@ -354,16 +361,16 @@ function prepareSettings(options) {
       }
 
       // Store settings
-      settings = settings || DEFAULT_CESIUM_SETTINGS;
+      settings = settings || DEFAULT_SETTINGS;
       if (!settings.keyringFile || settings.keyringFile !== keyringFile) {
         settings.keyringFile = keyringFile;
         window.localStorage.setItem('settings', JSON.stringify(settings));
       }
     }
   } else if (settings && settings.keyringFile) {
-    console.warn("[desktop] Unable to found keyring file define in Cesium settings. Skipping auto-login");
+    console.warn("[desktop] Unable to found keyring file define in settings. Skipping auto-login");
     // Store settings
-    settings = settings || DEFAULT_CESIUM_SETTINGS;
+    settings = settings || DEFAULT_SETTINGS;
     if (settings.keyringFile) {
       delete settings.keyringFile;
       window.localStorage.setItem('settings', JSON.stringify(settings));
@@ -421,7 +428,7 @@ function prepareSettings(options) {
 
         // Generate settings, on local node (with node's keyring)
         const keepAuthSession = !settings || (settings.keepAuthIdle == 9999);
-        settings = settings || DEFAULT_CESIUM_SETTINGS;
+        settings = settings || DEFAULT_SETTINGS;
         settings.node = {
           "host": local_host,
           "port": local_port
@@ -431,8 +438,8 @@ function prepareSettings(options) {
         if (keepAuthSession) {
           settings.keepAuthIdle = 9999;
         }
-        settings.plugins = settings.plugins || DEFAULT_CESIUM_SETTINGS.plugins;
-        settings.plugins.es = settings.plugins.es || DEFAULT_CESIUM_SETTINGS.plugins.es;
+        settings.plugins = settings.plugins || DEFAULT_SETTINGS.plugins;
+        settings.plugins.es = settings.plugins.es || DEFAULT_SETTINGS.plugins.es;
         if (locale === "fr") {
           settings.plugins.es.defaultCountry = "France";
         }
@@ -452,7 +459,7 @@ function prepareSettings(options) {
       // Do Not ask again
       else {
         console.debug('[desktop] User not need to connect on local node. Configuring Cesium to remember this choice...');
-        settings = settings || DEFAULT_CESIUM_SETTINGS;
+        settings = settings || DEFAULT_SETTINGS;
         settings.askLocalNodeKeyring = false;
         window.localStorage.setItem('settings', JSON.stringify(settings));
         options.settings = settings;
@@ -464,7 +471,7 @@ function prepareSettings(options) {
 
 function openNewWindow(options, callback) {
   options = {
-    title: "Cesium",
+    title: APP_NAME,
     position: 'center',
     width: 1300,
     height: 800,
@@ -490,14 +497,14 @@ function openNewWindow(options, callback) {
 
 function openMainWindow(options, callback) {
   openNewWindow({
-    id: "cesium",
+    id: APP_ID,
     ...options
   }, callback);
 }
 
 function openSecondaryWindow(options, callback) {
   openNewWindow({
-    id: "cesium-secondary",
+    id: APP_ID + "-secondary",
     ...options
   }, callback);
 }
@@ -514,7 +521,7 @@ function startApp(options) {
   }
 
   try {
-    console.info("[desktop] Launching Cesium...", options);
+    console.info("[desktop] Launching "+ APP_NAME + "...", options);
 
     loadSettings(options);
 
@@ -523,19 +530,26 @@ function startApp(options) {
 
     prepareSettings(options);
 
-    openMainWindow(options);
+    // If app was started using the splash screen, launch the main window
+    if (HAS_SPLASH_SCREEN === true) {
+      openMainWindow(options);
 
-    setTimeout(() => win.close(), 1000);
+      // Close the splash screen, after 1s
+      setTimeout(() => win.close(), 1000);
+    }
   }
   catch (err) {
-    console.error("[desktop] Error while trying to launch Cesium: " + (err && err.message || err || ''), err);
+    console.error("[desktop] Error while trying to launch: " + (err && err.message || err || ''), err);
 
-    if (options.debug && options.sdk) {
+    if (options.debug) {
       // Keep open, if debugger open
     }
     else {
-      // Close the splash screen
-      setTimeout(() => win.close());
+      // If app was started using the splash screen, close it
+      if (HAS_SPLASH_SCREEN) {
+        // Close the splash screen
+        setTimeout(() => win.close());
+      }
     }
   }
 
@@ -554,14 +568,16 @@ if (isSplashScreen(win)) {
   setTimeout(() => startApp(options), 1000);
 }
 
-// Main window: add menu
+// Main window
 else if (isMainWin(win)) {
 
-  if (options.menu) {
-    addMenu(win, options);
+  // If App not already start : do it
+  if (HAS_SPLASH_SCREEN === false) {
+    startApp(options)
   }
 
-  if (options.debug) {
+  // Else (if started) just open the debugger
+  else if (options.debug) {
     openDebugger(win);
   }
 }
