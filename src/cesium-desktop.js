@@ -21,10 +21,11 @@ const expectedCurrency = "g1";
 
 const APP_ID = "cesium";
 const APP_NAME = "Cesium";
+const HAS_SPLASH_SCREEN=true;
+
 const HOME = requireNodejs('os').homedir();
 const APP_HOME = path.resolve(HOME, path.join('.config', APP_ID));
 const APP_KEYRING = path.resolve(APP_HOME, 'keyring.yml');
-const HAS_SPLASH_SCREEN=false;
 const SPLASH_SCREEN_TITLE = APP_NAME + " loading..."; // WARN: must be same as manifest.json title
 const DUNITER_HOME = path.resolve(HOME, '.config/duniter/duniter_default');
 const DUNITER_CONF = path.resolve(DUNITER_HOME, 'conf.json');
@@ -465,8 +466,9 @@ function prepareSettings(options) {
         options.settings = settings;
       }
     }
-
   }
+
+  console.debug("[desktop] Preparing settings [OK]");
 }
 
 function openNewWindow(options, callback) {
@@ -530,8 +532,13 @@ function startApp(options) {
 
     prepareSettings(options);
 
+    console.info("[desktop] HAS_SPLASH_SCREEN=" + HAS_SPLASH_SCREEN);
+
     // If app was started using the splash screen, launch the main window
     if (HAS_SPLASH_SCREEN === true) {
+
+      console.info("[desktop] Will start main scree");
+
       openMainWindow(options);
 
       // Close the splash screen, after 1s
