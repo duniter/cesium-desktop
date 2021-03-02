@@ -44,8 +44,18 @@ const DEFAULT_SETTINGS = {
       "enable": true,
       "askEnable": false,
       "useRemoteStorage": false,
-      "host": "g1.data.duniter.fr",
+      "host": "g1.data.e-is.pro",
       "port": "443",
+      "fallbackNodes": [
+        {
+          "host": "g1.data.presles.fr",
+          "port": 443
+        },
+        {
+          "host": "g1.data.mithril.re",
+          "port": 443
+        }
+      ],
       "notifications": {
         "txSent": true,
         "txReceived": true,
