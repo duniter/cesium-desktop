@@ -508,6 +508,8 @@ function openNewWindow(options, callback) {
 }
 
 function openMainWindow(options, callback) {
+  console.info("[desktop] Starting main window...");
+
   openNewWindow({
     id: APP_ID,
     ...options
@@ -539,15 +541,12 @@ function startApp(options) {
 
     console.info("[desktop] User home:  ", options.home);
     console.info("[desktop] User locale:", options.locale);
+    console.info("[desktop] Has splash screen? " + HAS_SPLASH_SCREEN);
 
     prepareSettings(options);
 
-    console.info("[desktop] HAS_SPLASH_SCREEN=" + HAS_SPLASH_SCREEN);
-
     // If app was started using the splash screen, launch the main window
     if (HAS_SPLASH_SCREEN === true) {
-
-      console.info("[desktop] Will start main scree");
 
       openMainWindow(options);
 
