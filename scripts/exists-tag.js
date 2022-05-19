@@ -9,7 +9,7 @@ const rp = require('request-promise');
 const REPO         = 'duniter/cesium'
 const tagName      = process.argv[2]
 
-const GITHUB_TOKEN = fs.readFileSync(path.resolve(os.homedir(), '.config/duniter/.github'), 'utf8').replace(/\n/g, '')
+const GITHUB_TOKEN = fs.readFileSync(path.resolve(os.homedir(), '.config/cesium/.github'), 'utf8').replace(/\n/g, '')
 
 co(function*() {
   try {

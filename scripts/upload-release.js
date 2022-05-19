@@ -11,7 +11,7 @@ const tagName      = process.argv[2]
 const filePath     = process.argv[3]
 const fileType     = getFileType(filePath)
 
-const GITHUB_TOKEN = fs.readFileSync(path.resolve(os.homedir(), '.config/duniter/.github'), 'utf8').replace(/\n/g, '')
+const GITHUB_TOKEN = fs.readFileSync(path.resolve(os.homedir(), '.config/cesium/.github'), 'utf8').replace(/\n/g, '')
 
 co(function*() {
   try {
