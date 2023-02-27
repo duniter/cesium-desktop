@@ -12,7 +12,7 @@ This script will run Cesium Desktop, taking care of installing Cesium + Nw.js if
 
 #### Authentication token
 
-**Requires your GITHUB token with full access to `repo`** to be stored in clear in `$HOME/.config/duniter/.github` text file.
+**Requires your GITHUB token with full access to `repo`** to be stored in clear in `$HOME/.config/cesium/.github` text file.
 
 > You can create such a token at https://github.com/settings/tokens > "Generate a new token". Then copy the token and paste it in the file.
 
