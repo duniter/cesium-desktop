@@ -1,13 +1,17 @@
 #!/bin/bash
 
+# Use SDK, to be able to debug
+export NW_BASENAME="nwjs"
+
 PROJECT_DIR=$(pwd)
-VERSION=$1
+export VERSION=$1
+
 if [[ "${VERSION}" = "DEV" ]]; then
   # Installing default version
   ./install.sh
   [[ ! $? -eq 0 ]] && exit 1
 
-  # Copying DEV files
+  # Then copying DEV files
   if [[ -d "${PROJECT_DIR}/../../www/dist" ]]; then
     echo "Copying DEV files..."
     mkdir -p ${PROJECT_DIR}/www/cesium
