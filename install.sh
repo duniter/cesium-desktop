@@ -2,24 +2,24 @@
 
 PROJECT_DIR=$(pwd)
 DOWNLOADS_DIR=${PROJECT_DIR}/downloads
-NW_VERSION=${NW_VERSION:-"0.76.0"}
+NW_VERSION=0.42.2 #${NW_VERSION:-"0.76.0"}
 NW_BASENAME=${NW_BASENAME:-"nwjs"}
-CHROMIUM_MAJOR_VERSION=113
+CHROMIUM_MAJOR_VERSION=78 #113
 CESIUM_DEFAULT_VERSION=1.6.12
-NODE_VERSION=19
+NODE_VERSION=10 #19
 
 # Check first arguments = version
-if [[ $1 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ ]];
+if [[ $1 =~ ^[0-9]+.[0-9]+.[0-9]+(-[a-z]+[-0-9]*)?$ ]];
 then
   VERSION="$1"
   echo "Using Cesium version: $VERSION"
 else
-  if [[ -f ${PROJECT_DIR}/src/nw/cesium/manifest.json ]];
+  if [[ -f ${PROJECT_DIR}/www/cesium/manifest.json ]];
   then
-    VERSION=`grep -oP "version\": \"\d+.\d+.\d+((a|b)[0-9]+)?\"" ${PROJECT_DIR}/src/nw/cesium/manifest.json | grep -oP "\d+.\d+.\d+((a|b)[0-9]+)?"`
+    VERSION=`grep -m 1 -oP "version\": \"\d+.\d+.\d+(-\w+[-0-9]*)?\"" ${PROJECT_DIR}/www/cesium/manifest.json | grep -oP "\d+.\d+.\d+(-\w+[-0-9]*)?"`
   fi
 
-  if [[ $VERSION =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ ]];
+  if [[ $VERSION =~ ^[0-9]+.[0-9]+.[0-9]+(-[a-z]+[-0-9]*)?$ ]];
   then
     echo "Using Cesium detected version: $VERSION"
   else
@@ -51,12 +51,12 @@ if [[ ! -f "${PROJECT_DIR}/www/nw" ]]; then
   fi
 
   # Uncompress archive
-  tar xvzf ${NW_BASENAME}-v${NW_VERSION}-linux-x64.tar.gz || exit 1
+  tar xvf ${NW_BASENAME}-v${NW_VERSION}-linux-x64.tar.gz || exit 1
 
   # Copy to ./www
   mkdir -p "${PROJECT_DIR}/www"
   cp -rf ${NW_BASENAME}-v${NW_VERSION}-linux-x64/* "${PROJECT_DIR}/www" && rm -rf ${NW_BASENAME}-v${NW_VERSION}-linux-x64 || exit 1
-  rm ${NW_BASENAME}-v${NW_VERSION}-linux-x64.tar.gz || exit 1
+  #rm ${NW_BASENAME}-v${NW_VERSION}-linux-x64.tar.gz || exit 1
 
 # Check NW version
 else
@@ -86,7 +86,7 @@ yarn
 # Remove old Cesium version
 if [[ -f ${PROJECT_DIR}/www/cesium/index.html ]];
 then
-  OLD_VERSION=$(grep -oP "version\": \"\d+.\d+.\d+((a|b)[0-9]+)?\"" ${PROJECT_DIR}/www/cesium/manifest.json | grep -oP "\d+.\d+.\d+((a|b)[0-9]+)?")
+  OLD_VERSION=$(grep -oP "version\": \"\d+.\d+.\d+(\w+[-0-9]*)?\"" ${PROJECT_DIR}/www/cesium/manifest.json | grep -oP "\d+.\d+.\d+(\w+[-0-9]*)?")
   if [[ ! "$VERSION" = "$OLD_VERSION" ]];
   then
     echo "--- Removing old Cesium v${OLD_VERSION}..."
