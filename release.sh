@@ -109,6 +109,7 @@ for ASSET_BASENAME in $EXPECTED_ASSETS; do
 
         ASSET_PATH="$PWD/arch/linux/$ASSET_BASENAME"
 
+        # Build
         if [[ ! -f "${ASSET_PATH}" ]]; then
           echo "--- Building '${ASSET_BASENAME}'..."
           ./scripts/build.sh make linux $TAG
@@ -134,11 +135,26 @@ for ASSET_BASENAME in $EXPECTED_ASSETS; do
     # Windows
     if [[ $ASSET_BASENAME == *".exe" ]]; then
       if [[ $ARCH == "x86_64" ]]; then
-        echo "Starting Windows build..."
-        ./scripts/build.sh make win $TAG
-        WIN_PATH="$PWD/arch/windows/$ASSET_BASENAME"
-        if [[ -f "${WIN_PATH}" ]]; then
-          node ./scripts/upload-release.js ${REMOTE_TAG} ${WIN_PATH}
+
+        ASSET_PATH="$PWD/arch/windows/$ASSET_BASENAME"
+
+        # Build
+        if [[ ! -f "${ASSET_PATH}" ]]; then
+          echo "--- Building '${ASSET_BASENAME}'..."
+          ./scripts/build.sh make win $TAG
+          [[ $? -eq 0 ]] && echo "--- Building '${ASSET_BASENAME}' [OK]"
+        fi
+
+        # Upload asset
+        if [[ -f "${ASSET_PATH}" ]]; then
+          echo ""
+          echo "--- Uploading '${ASSET_BASENAME}' to github ..."
+          node ./scripts/upload-release.js ${REMOTE_TAG} ${ASSET_PATH}
+        fi
+
+        # Upload sha256 (if exists)
+        if [[ -f "${ASSET_PATH}.sha256" ]]; then
+          node ./scripts/upload-release.js ${REMOTE_TAG} ${ASSET_PATH}.sha256
         fi
       else
         echo "This computer cannot build this asset, required architecture is 'x86_64'. Skipping."
@@ -148,25 +164,25 @@ for ASSET_BASENAME in $EXPECTED_ASSETS; do
     # OSX
     if [[ $ASSET_BASENAME == *"osx-x64.zip" ]]; then
       if [[ $ARCH == "x86_64" ]]; then
-        echo "Starting OSX build..."
-        ./scripts/build.sh make osx $TAG
-        OSX_PATH="$PWD/arch/osx/$ASSET_BASENAME"
-        if [[ -f "${OSX_PATH}" ]]; then
-          node ./scripts/upload-release.js ${REMOTE_TAG} ${OSX_PATH}
-        fi
-      else
-        echo "This computer cannot build this asset, required architecture is 'x86_64'. Skipping."
-      fi
-    fi
+        ASSET_PATH="$PWD/arch/osx/$ASSET_BASENAME"
 
-    # iOS
-    if [[ $ASSET_BASENAME == *"ios.zip" ]]; then
-      if [[ $ARCH == "x86_64" ]]; then
-        echo "Starting iOS build..."
-        ./scripts/build.sh make ios $TAG
-        IOS_PATH="$PWD/arch/osx/$ASSET_BASENAME"
-        if [[ -f "${IOS_PATH}" ]]; then
-          node ./scripts/upload-release.js ${REMOTE_TAG} ${IOS_PATH}
+        # Build
+        if [[ ! -f "${ASSET_PATH}" ]]; then
+          echo "--- Building '${ASSET_BASENAME}'..."
+          ./scripts/build.sh make osx $TAG
+          [[ $? -eq 0 ]] && echo "--- Building '${ASSET_BASENAME}' [OK]"
+        fi
+
+        # Upload asset
+        if [[ -f "${ASSET_PATH}" ]]; then
+          echo ""
+          echo "--- Uploading '${ASSET_BASENAME}' to github ..."
+          node ./scripts/upload-release.js ${REMOTE_TAG} ${ASSET_PATH}
+        fi
+
+        # Upload sha256 (if exists)
+        if [[ -f "${ASSET_PATH}.sha256" ]]; then
+          node ./scripts/upload-release.js ${REMOTE_TAG} ${ASSET_PATH}.sha256
         fi
       else
         echo "This computer cannot build this asset, required architecture is 'x86_64'. Skipping."
