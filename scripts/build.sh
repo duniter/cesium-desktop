@@ -11,7 +11,7 @@ make)
       [[ $? -eq 0 ]] && echo ">> Copying Cesium Desktop sources..."
       [[ $? -eq 0 ]] && cp -f ../../src/* ./
       [[ $? -eq 0 ]] && cp -f ../../LICENSE ./LICENSE.txt
-      [[ $? -eq 0 ]] && echo ">> Starting Vagrant Ubuntu VM..."
+      [[ $? -eq 0 ]] && echo "" && echo ">> Starting Vagrant Ubuntu VM..."
       [[ $? -eq 0 ]] && vagrant up
       [[ $? -eq 0 ]] && echo ">> VM: building Cesium..."
       [[ $? -eq 0 ]] && vagrant ssh -- 'bash -s' < ./build-deb.sh
@@ -30,6 +30,7 @@ make)
   win)
     cd arch/windows
     if [[ ! -f "cesium-desktop-v$TAG-windows-x64.exe" ]]; then
+      exit 1
       [[ $? -eq 0 ]] && echo ">> Copying Cesium Desktop sources..."
       [[ $? -eq 0 ]] && cp -f ../../src/* ./
       [[ $? -eq 0 ]] && cp -f ../../LICENSE ./LICENSE.txt

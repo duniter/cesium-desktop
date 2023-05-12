@@ -11,7 +11,11 @@ const tagName      = process.argv[2]
 const command      = process.argv[3]
 const value        = process.argv[4]
 
-const GITHUB_TOKEN = fs.readFileSync(path.resolve(os.homedir(), '.config/cesium/.github'), 'utf8').replace(/\n/g, '')
+let GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+if (!GITHUB_TOKEN) {
+  const tokenFilePath = path.resolve(os.homedir(), '.config/cesium/.github');
+  GITHUB_TOKEN = fs.readFileSync(tokenFilePath, 'utf8').replace(/\n/g, '')
+}
 
 co(function*() {
   try {

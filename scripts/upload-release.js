@@ -11,17 +11,22 @@ const tagName      = process.argv[2]
 const filePath     = process.argv[3]
 const fileType     = getFileType(filePath)
 
-const GITHUB_TOKEN = fs.readFileSync(path.resolve(os.homedir(), '.config/cesium/.github'), 'utf8').replace(/\n/g, '')
+let GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+if (!GITHUB_TOKEN) {
+  const tokenFilePath = path.resolve(os.homedir(), '.config/cesium/.github');
+  GITHUB_TOKEN = fs.readFileSync(tokenFilePath, 'utf8').replace(/\n/g, '')
+}
 
 co(function*() {
   try {
-    // Get release URL
+    // Get upload URL
     const release = yield github('/repos/' + REPO + '/releases/tags/' + tagName); // May be a draft
-    console.log('Release: ' + release.tag_name);
     const filename = path.basename(filePath)
-    console.log('Uploading asset %s...', filename);
     const upload_url = release.upload_url.replace('{?name,label}', '?' + ['name=' + filename].join('&'));
-    yield githubUpload(upload_url, filePath, fileType)
+
+    // Upload file
+    console.info(' - Uploading \'%s\' into %s...', filename, release.tag_name);
+    yield githubUpload(upload_url, filePath, fileType);
   } catch (e) {
     console.error(e);
   }

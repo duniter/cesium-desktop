@@ -2,11 +2,11 @@
 
 PROJECT_DIR=$(pwd)
 DOWNLOADS_DIR=${PROJECT_DIR}/downloads
-NW_VERSION=0.42.2 #${NW_VERSION:-"0.76.0"}
+NW_VERSION=${NW_VERSION:-"0.42.2"}
 NW_BASENAME=${NW_BASENAME:-"nwjs"}
-CHROMIUM_MAJOR_VERSION=78 #113
-CESIUM_DEFAULT_VERSION=1.6.12
-NODE_VERSION=10 #19
+CHROMIUM_MAJOR_VERSION=78
+CESIUM_DEFAULT_VERSION=1.7.0
+NODE_VERSION=10
 
 # Check first arguments = version
 if [[ $1 =~ ^[0-9]+.[0-9]+.[0-9]+(-[a-z]+[-0-9]*)?$ ]];
@@ -36,9 +36,6 @@ else
     echo "nvm (Node version manager) not found (directory NVM_DIR not defined). Please install nvm, and retry"
     exit 1
 fi
-
-# Install Yarn
-npm install -g yarn
 
 # Install NW.js
 if [[ ! -f "${PROJECT_DIR}/www/nw" ]]; then
@@ -81,7 +78,7 @@ cp -f ${PROJECT_DIR}/LICENSE LICENSE.txt
 
 # Install dependencies
 echo "--- Install dependencies to ./www/node_modules"
-yarn
+npm install
 
 # Remove old Cesium version
 if [[ -f ${PROJECT_DIR}/www/cesium/index.html ]];

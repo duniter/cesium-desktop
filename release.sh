@@ -77,7 +77,7 @@ ASSETS=`node ./scripts/create-release.js $REMOTE_TAG create`
 ZIP_BASENAME="${PROJECT_NAME}-${REMOTE_TAG}-web"
 if [[ ! -f "${DOWNLOADS}/${ZIP_BASENAME}.zip" ]]; then
     echo "Downloading ${PROJECT_NAME} web release..."
-    mkdir -p ${DOWNLOADS} && cd ${DOWNLOADS} || exit 1
+    mkdir -p ${DOWNLOADS} && cd ${DOWNLOADS} || exit 1
     wget "${REPO_PUBLIC_URL}/releases/download/${REMOTE_TAG}/${ZIP_BASENAME}.zip"
     if [[ $? -ne 0 ]]; then
         exit 2
@@ -95,21 +95,36 @@ fi
 echo "Removing old Vagrant VM... TODO: optimize this !"
 rm -rf ~/.vagrant.d/*
 
-echo "Assets: $EXPECTED_ASSETS"
+#echo "Assets: $EXPECTED_ASSETS"
 
-for asset in $EXPECTED_ASSETS; do
-  if [[ -z `echo $ASSETS | grep -F "$asset"` ]]; then
+for ASSET_BASENAME in $EXPECTED_ASSETS; do
 
-    echo "Missing asset: $asset"
+  echo ""
+  echo "--- Checking if asset '$ASSET_BASENAME' exists on GitHub..."
+  if [[ -z `echo $ASSETS | grep -F "$ASSET_BASENAME"` ]]; then
 
     # Debian
-    if [[ $asset == *"linux-x64.deb" ]] || [[ $asset == *"linux-x64.tar.gz" ]]; then
+    if [[ $ASSET_BASENAME == *"linux-x64.deb" ]] || [[ $ASSET_BASENAME == *"linux-x64.tar.gz" ]]; then
       if [[ $ARCH == "x86_64" ]]; then
-        echo "Starting Debian build..."
-        ./scripts/build.sh make linux $TAG
-        DEB_PATH="$PWD/arch/linux/$asset"
-        if [[ $? -eq 0 ]] && [[ -f "${DEB_PATH}" ]]; then
-          node ./scripts/upload-release.js ${REMOTE_TAG} ${DEB_PATH}
+
+        ASSET_PATH="$PWD/arch/linux/$ASSET_BASENAME"
+
+        if [[ ! -f "${ASSET_PATH}" ]]; then
+          echo "--- Building '${ASSET_BASENAME}'..."
+          ./scripts/build.sh make linux $TAG
+          [[ $? -eq 0 ]] && echo "--- Building '${ASSET_BASENAME}' [OK]"
+        fi
+
+        # Upload asset
+        if [[ -f "${ASSET_PATH}" ]]; then
+          echo ""
+          echo "--- Uploading '${ASSET_BASENAME}' to github ..."
+          node ./scripts/upload-release.js ${REMOTE_TAG} ${ASSET_PATH}
+        fi
+
+        # Upload sha256 (if exists)
+        if [[ -f "${ASSET_PATH}.sha256" ]]; then
+          node ./scripts/upload-release.js ${REMOTE_TAG} ${ASSET_PATH}.sha256
         fi
       else
         echo "This computer cannot build this asset, required architecture is 'x86_64'. Skipping."
@@ -117,11 +132,11 @@ for asset in $EXPECTED_ASSETS; do
     fi
 
     # Windows
-    if [[ $asset == *".exe" ]]; then
+    if [[ $ASSET_BASENAME == *".exe" ]]; then
       if [[ $ARCH == "x86_64" ]]; then
         echo "Starting Windows build..."
         ./scripts/build.sh make win $TAG
-        WIN_PATH="$PWD/arch/windows/$asset"
+        WIN_PATH="$PWD/arch/windows/$ASSET_BASENAME"
         if [[ -f "${WIN_PATH}" ]]; then
           node ./scripts/upload-release.js ${REMOTE_TAG} ${WIN_PATH}
         fi
@@ -131,11 +146,11 @@ for asset in $EXPECTED_ASSETS; do
     fi
 
     # OSX
-    if [[ $asset == *"osx-x64.zip" ]]; then
+    if [[ $ASSET_BASENAME == *"osx-x64.zip" ]]; then
       if [[ $ARCH == "x86_64" ]]; then
         echo "Starting OSX build..."
         ./scripts/build.sh make osx $TAG
-        OSX_PATH="$PWD/arch/osx/$asset"
+        OSX_PATH="$PWD/arch/osx/$ASSET_BASENAME"
         if [[ -f "${OSX_PATH}" ]]; then
           node ./scripts/upload-release.js ${REMOTE_TAG} ${OSX_PATH}
         fi
@@ -145,11 +160,11 @@ for asset in $EXPECTED_ASSETS; do
     fi
 
     # iOS
-    if [[ $asset == *"ios.zip" ]]; then
+    if [[ $ASSET_BASENAME == *"ios.zip" ]]; then
       if [[ $ARCH == "x86_64" ]]; then
         echo "Starting iOS build..."
         ./scripts/build.sh make ios $TAG
-        IOS_PATH="$PWD/arch/osx/$asset"
+        IOS_PATH="$PWD/arch/osx/$ASSET_BASENAME"
         if [[ -f "${IOS_PATH}" ]]; then
           node ./scripts/upload-release.js ${REMOTE_TAG} ${IOS_PATH}
         fi
@@ -165,10 +180,10 @@ if [[ $? -eq 0 ]]; then
 
   # Clean temporary files
   if [[ $? -eq 0 ]]; then
-    rm ${DOWNLOADS}/cesium-*-web.zip
-    rmdir downloads
+    rm downloads/cesium-*-web.zip
+    rmdir --ignore-fail-on-non-empty downloads
 
-    echo "All the binaries have been uploaded."
+    echo "--- All assets have been uploaded."
   fi
 
 fi

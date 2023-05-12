@@ -26,7 +26,7 @@ RELEASES=${ROOT}/releases
 # Downloads
 # -----------
 
-mkdir -p "${DOWNLOADS}" && cd "${DOWNLOADS}" || exit 1
+mkdir -p "${DOWNLOADS}" && cd "${DOWNLOADS}" || exit 1
 
 rm -rf "${DOWNLOADS}/${PROJECT_NAME}"
 mkdir -p "${DOWNLOADS}/${PROJECT_NAME}"
@@ -69,7 +69,7 @@ fi
 if [[ ! -d "${DOWNLOADS}/${NW}" ]]; then
   cd ${DOWNLOADS}
   echo "Downloading ${NW_GZ}..."
-  wget -kL https://dl.nwjs.io/${NW_RELEASE}/${NW_GZ}
+  wget -kL http://dl.nwjs.io/${NW_RELEASE}/${NW_GZ}
   tar xvzf ${NW_GZ}
 fi
 
@@ -122,7 +122,7 @@ sed -i 's/<script src="config.js"[^>]*><\/script>/<script src="config.js"><\/scr
 
 # Specific desktop dependencies (for reading Duniter conf, ...)
 cd "${RELEASES}/desktop_release/nw"
-yarn
+npm install
 
 # Releases
 cp -R "${RELEASES}/desktop_release" "${RELEASES}/desktop_release_tgz"
@@ -147,3 +147,10 @@ cd ${RELEASES}/ || exit 1
 fakeroot dpkg-deb --build "${PROJECT_NAME}-x64" || exit 1
 mv "${PROJECT_NAME}-x64.deb" "/vagrant/${OUTPUT_BASENAME}.deb" || exit 1
 
+# -------------------------------------------------
+# Build Desktop sha256 files
+# -------------------------------------------------
+
+cd "/vagrant" || exit 1
+sha256sum ${OUTPUT_BASENAME}.tar.gz > ${OUTPUT_BASENAME}.tar.gz.sha256
+sha256sum ${OUTPUT_BASENAME}.deb > ${OUTPUT_BASENAME}.deb.sha256
