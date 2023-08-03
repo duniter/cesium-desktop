@@ -13,12 +13,17 @@ REM InnoSetup
 set PATH="C:\Program Files (x86)\Inno Setup 5";%PATH%
 
 cd C:\Users\vagrant
-REM echo "Suppression des anciennes sources..."
+REM echo "Deleting old source..."
 del /s /q cesium-v*-web.zip
 rd /s /q cesium
 rd /s /q cesium_release
-echo "Clonage de Cesium..."
+echo "Cloning Cesium (from git.duniter.org)..."
+echo "Cloning Cesium (from github.com)..."
 git clone https://github.com/duniter/cesium.git
+if not exist C:\Users\vagrant\cesium (
+  echo "ERROR: Cannot clone Cesium source!"
+  exit 1
+)
 cd cesium
 
 for /f "delims=" %%a in ('git rev-list --tags --max-count=1') do @set CESIUM_REV=%%a
@@ -32,7 +37,7 @@ echo %CESIUM_ZIP%
 cd ..
 
 if not exist C:\vagrant\%NW_GZ% (
-  echo "Telechargement de %NW%.zip..."
+  echo "Downloading %NW%.zip..."
   REM powershell -Command "Invoke-WebRequest -Uri https://dl.nwjs.io/v%NW_VERSION%/%NW%.zip -OutFile C:\vagrant\%NW_GZ%"
   powershell -Command "(New-Object System.Net.WebClient).DownloadFile(\"https://dl.nwjs.io/v%NW_VERSION%/%NW%.zip\", \"C:\vagrant\%NW_GZ%\")"
 )
@@ -68,3 +73,5 @@ cd ..
 iscc C:\vagrant\cesium.iss /DROOT_PATH=%cd%
 move %cd%\Cesium.exe C:\vagrant\cesium-desktop-%CESIUM_TAG%-windows-x64.exe
 echo "Build done: binary available at cesium-desktop-%CESIUM_TAG%-windows-x64.exe"
+
+exit 0
