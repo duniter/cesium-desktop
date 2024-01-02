@@ -26,7 +26,7 @@ const HAS_SPLASH_SCREEN=true;
 const HOME = requireNodejs('os').homedir();
 const APP_HOME = path.resolve(HOME, path.join('.config', APP_ID));
 const APP_KEYRING = path.resolve(APP_HOME, 'keyring.yml');
-const SPLASH_SCREEN_TITLE = APP_NAME + " loading..."; // WARN: must be same as manifest.json title
+const SPLASH_SCREEN_TITLE = APP_NAME + " loading..."; // WARN: must be same inside splash.html
 const DUNITER_HOME = path.resolve(HOME, '.config/duniter/duniter_default');
 const DUNITER_CONF = path.resolve(DUNITER_HOME, 'conf.json');
 const DUNITER_KEYRING = path.resolve(DUNITER_HOME, 'keyring.yml');
@@ -101,6 +101,7 @@ function isMainWin(win) {
   return win && win.title === APP_NAME && true;
 }
 function isSplashScreen(win) {
+  console.info(win.title);
   return (win && win.title === SPLASH_SCREEN_TITLE);
 }
 
@@ -581,12 +582,17 @@ initLogger(options);
 
 // Splash screen: start the app
 if (isSplashScreen(win)) {
+
+
+  console.info('isSplashScreen');
+
   setTimeout(() => startApp(options), 1000);
 }
 
 // Main window
 else if (isMainWin(win)) {
 
+  console.info('isMainWin');
   // If App not already start : do it
   if (HAS_SPLASH_SCREEN === false) {
     startApp(options)
