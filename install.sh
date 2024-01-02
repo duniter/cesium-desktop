@@ -16,7 +16,7 @@ then
 else
   if [[ -f ${PROJECT_DIR}/www/cesium/manifest.json ]];
   then
-    VERSION=`grep -m 1 -oP "version\": \"\d+.\d+.\d+(-\w+[-0-9]*)?\"" ${PROJECT_DIR}/www/cesium/manifest.json | grep -oP "\d+.\d+.\d+(-\w+[-0-9]*)?"`
+    VERSION=$(grep -m 1 -oP 'version": "\d+.\d+.\d+(-\w+[-0-9]*)?"' ${PROJECT_DIR}/www/cesium/manifest.json | grep -oP "\d+.\d+.\d+(-\w+[-0-9]*)?")
   fi
 
   if [[ $VERSION =~ ^[0-9]+.[0-9]+.[0-9]+(-[a-z]+[-0-9]*)?$ ]];
@@ -57,7 +57,7 @@ if [[ ! -f "${PROJECT_DIR}/www/nw" ]]; then
 
 # Check NW version
 else
-  cd "${PROJECT_DIR}/www"
+  cd "${PROJECT_DIR}/www" || exit 1
   NW_ACTUAL_VERSION=$(./nw --version | grep nwjs | awk '{print $2}')
   echo "Using Chromium version: ${NW_ACTUAL_VERSION}"
   CHROMIUM_ACTUAL_MAJOR_VERSION=$(echo "${NW_ACTUAL_VERSION}" | awk '{split($0, array, ".")} END{print array[1]}')
@@ -72,7 +72,7 @@ fi
 
 # Copy sources
 echo "--- Copying sources from ./src to ./www"
-cd "${PROJECT_DIR}/www/"
+cd "${PROJECT_DIR}/www/" || exit 1
 cp -rf ${PROJECT_DIR}/src/* .
 cp -f ${PROJECT_DIR}/LICENSE LICENSE.txt
 

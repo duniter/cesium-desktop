@@ -11,6 +11,7 @@
     "max_height": 480,
     "position": "center",
     "frame": false,
+    "fullscreen": false,
     "title": "Cesium loading..."
   },
   "dependencies": {

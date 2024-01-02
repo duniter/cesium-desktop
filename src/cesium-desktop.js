@@ -21,7 +21,7 @@ const expectedCurrency = "g1";
 
 const APP_ID = "cesium";
 const APP_NAME = "Cesium";
-const HAS_SPLASH_SCREEN=true;
+const HAS_SPLASH_SCREEN= true;
 
 const HOME = requireNodejs('os').homedir();
 const APP_HOME = path.resolve(HOME, path.join('.config', APP_ID));
@@ -101,8 +101,9 @@ function isMainWin(win) {
   return win && win.title === APP_NAME && true;
 }
 function isSplashScreen(win) {
-  console.info(win.title);
-  return (win && win.title === SPLASH_SCREEN_TITLE);
+  const title = win && win.title;
+  console.debug('[desktop] Current window title: ' + title);
+  return (title === SPLASH_SCREEN_TITLE);
 }
 
 /**
@@ -218,16 +219,20 @@ function initLogger(options) {
   }
 }
 
-function openDebugger(subWin) {
-  subWin = subWin || win;
+function openDebugger(subWin, callback) {
+  subWin = subWin || win;
   if (isSdkMode()) {
     try {
       console.info("[desktop] Opening debugger...");
       subWin.showDevTools();
+      if (callback) callback();
     }
     catch(err) {
       console.error("[desktop] Cannot open debugger:", err);
     }
+  }
+  else {
+    if (callback) callback();
   }
 }
 
@@ -252,7 +257,7 @@ function addMenu(subWin, options) {
     console.error("Required 'subWin' argument");
     return;
   }
-  options = options || getArgs();
+  options = options || getArgs();
   if (!options.locale) {
     loadSettings(options);
   }
@@ -505,6 +510,7 @@ function openNewWindow(options, callback) {
     min_height:  options.min_height,
     frame:  options.frame,
     focus:  options.focus,
+    fullscreen: false
   }, callback);
 }
 
@@ -529,7 +535,7 @@ function openSecondaryWindow(options, callback) {
  * Main PROCESS
  */
 function startApp(options) {
-  options = options || getArgs();
+  options = options || getArgs();
 
   if (options.debug) {
     openDebugger(win);
@@ -582,20 +588,16 @@ initLogger(options);
 
 // Splash screen: start the app
 if (isSplashScreen(win)) {
-
-
-  console.info('isSplashScreen');
-
+  console.debug('[desktop] isSplashScreen');
   setTimeout(() => startApp(options), 1000);
 }
 
 // Main window
 else if (isMainWin(win)) {
-
-  console.info('isMainWin');
+  console.debug('[desktop] isMainWin');
   // If App not already start : do it
   if (HAS_SPLASH_SCREEN === false) {
-    startApp(options)
+    startApp(options);
   }
 
   // Else (if started) just open the debugger
