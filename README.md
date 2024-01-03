@@ -20,9 +20,9 @@ This script will run Cesium Desktop, taking care of installing Cesium + Nw.js if
 
 The release script use some Vagrant, and a VM running into VirtualBox.
 
-- Install VirtualBox
+- Install VirtualBox version 6 (not tested under version 7)
 - Install the VirtualBox Extension Pack (need by OSx build, for USB support).
-- Install vagrant : `sudo apt-get install vagrant`
+- Install vagrant : `sudo apt install vagrant`
 
 ### Execute release script
 

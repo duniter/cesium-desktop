@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>cesium-desktop</id>
+  <launchable type="desktop-id">cesium.desktop</launchable>
+  <metadata_license>GPL-3.0+ o GFDL-1.3-only</metadata_license>
+  <project_license>GPL-3.0+</project_license>
+
+  <name>Cesium</name>
+  <summary>Wallet for Ğ1 Currency</summary>
+  <description>
+    <p>
+      Cesium is a wallet (client-software) for Ğ1, a libre currency. It allows
+      users to manage their G1 accounts, send and receive transactions, and view
+      the history of their operations. Please visit https://www.duniter.org for
+      more information on G1 and libre currencies.
+    </p>
+  </description>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://cesium.app/i18n/en_GB/contents/home/Cesium-G1-mockup.png</image>
+      <caption>Main interface</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cesium.app/i18n/en_GB/contents/features/signup.png</image>
+      <caption>Create your account</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cesium.app/i18n/en_GB/contents/features/receive-libre-money.png</image>
+      <caption>Receive</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://cesium.app/i18n/en_GB/contents/features/send-libre-money.png</image>
+      <caption>Send</caption>
+    </screenshot>
+  </screenshots>
+
+  <url type="homepage">https://cesium.app</url>
+  <url type="bugtracker">https://git.duniter.org/clients/cesium-grp/cesium/issues</url>
+  <url type="help">https://forum.duniter.org/c/support/cesium/37</url>
+  <url type="donation">https://cesium.app/en/merci</url>
+  <project_group>DUNITER</project_group>
+  <developer_name>Duniter Team</developer_name>
+  <update_contact>contact@duniter.org</update_contact>
+  <content_rating type="oars-1.1" />
+
+  <categories>
+    <category>Utility</category>
+    <category>Finance</category>
+  </categories>
+
+  <releases>
+    <release version="1.7.12" date="2024-01-01">
+      <description>
+        <p>New features in Cesium 1.7.12:</p>
+        <ul>
+          <li>Upgrade to NW.js v0.83.0 (Chromium 120).</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+</component>

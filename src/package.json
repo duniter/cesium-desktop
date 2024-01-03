@@ -17,10 +17,6 @@
   "dependencies": {
     "bs58": "^4.0.1",
     "cli-color": "^2.0.3",
-    "js-yaml": "^3.14.1",
-    "co": "^4.6.0",
-    "request": "^2.88.2",
-    "request-promise": "^4.2.6",
-    "stringstream": "^0.0.6"
+    "js-yaml": "^3.14.1"
   }
 }

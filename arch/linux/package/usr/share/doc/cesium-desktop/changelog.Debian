@@ -1,0 +1,6 @@
+cesium-desktop (1.7.12) stable; urgency=low
+
+  [ Duniter Team ]
+  * Upgrade to NW.js v0.83.0 (Chromium 120)
+
+ -- Duniter Team <contact@duniter.org>  Wed,  3 Jan 2024 11:30:00 +0100

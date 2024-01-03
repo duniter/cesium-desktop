@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Cesium Ğ1-Test
-Exec=cesium-g1-test
+Exec=cesium-test
 Icon=/opt/cesium/nw/cesium/img/logo.png
 Type=Application
 Categories=Utility

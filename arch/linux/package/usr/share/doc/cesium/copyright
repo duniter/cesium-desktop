@@ -1,7 +1,0 @@
-Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: Cesium
-Upstream-Contact: Duniter Team <contact@duniter.org>
-Source: https://git.duniter.org/clients/cesium-grp/cesium
-Copyright: 2017-2020 Benoit Lavenier
-License: GPL-3+
-Files: *

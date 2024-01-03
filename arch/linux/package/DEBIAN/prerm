@@ -1,7 +1,6 @@
 #!/bin/bash
 
 [[ -f /usr/bin/cesium ]] && rm /usr/bin/cesium
-[[ -f /usr/bin/cesium-g1-test ]] && rm /usr/bin/cesium-g1-test
-[[ -f /usr/bin/cesium-desktop ]] && rm -f /usr/bin/cesium-desktop
+[[ -f /usr/bin/cesium-test ]] && rm /usr/bin/cesium-test
 [[ -d /opt/cesium ]] && rm -Rf /opt/cesium
-[[ -d /opt/cesium-g1-test ]] && rm -Rf /opt/cesium-g1-test
+[[ -d /opt/cesium-test ]] && rm -Rf /opt/cesium-test

@@ -1,12 +1,17 @@
-Package: cesium
-Version: 1.4.0
-Section: misc
-Priority: optional
+Package: cesium-desktop
+Version: 1.7.12
 Architecture: all
-Installed-Size: 235351
 Maintainer: Duniter Team <contact@duniter.org>
+Installed-Size: 235351
+Depends: libgconf-2-4 (>= 3.2.0), libatomic1
+Conflicts: cesium, cesium-desktop
+Replaces: cesium, cesium-desktop
+Provides: cesium-desktop
+Section: contrib/misc
+Priority: optional
+Homepage: https://www.cesium.app
+Package-Type: deb
 Description: Cesium Wallet for G1 currency
  Cesium is a wallet (client-software) for G1 a libre currency.
  Please visit https://www.duniter.org for more information on G1 and libre currencies.
-Depends: libgconf-2-4 (>= 3.2.0), libatomic1
-Homepage: https://www.cesium.app
+ License AGPL-3

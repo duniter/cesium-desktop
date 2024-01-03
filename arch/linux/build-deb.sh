@@ -10,7 +10,7 @@ export NVM_DIR="$HOME/.nvm"
 
 # Prepare
 NVER=$(node -v)
-NW_VERSION=0.42.2
+NW_VERSION=0.83.0
 NW_RELEASE=v${NW_VERSION}
 NW_BASENAME=nwjs
 #NW_BASENAME=nwjs-sdk
@@ -37,7 +37,7 @@ if [ ! -d "${DOWNLOADS}/${PROJECT_NAME}_src" ]; then
   cd ${PROJECT_NAME}_src
 else
   cd ${PROJECT_NAME}_src
-  git fetch origin
+  git fetch origin --tags
   git reset HEAD
 fi
 
@@ -58,10 +58,10 @@ fi
 if [ ! -d "${DOWNLOADS}/${WEB_ZIP_FILE}" ]; then
   cd ${DOWNLOADS}
   echo "Downloading ${WEB_ZIP_FILE} into ${DOWNLOADS} ..."
-  wget -kL "${REPO_PUBLIC_URL}/releases/download/v${PROJECT_VERSION}/${WEB_ZIP_FILE}"
+  wget -q "${REPO_PUBLIC_URL}/releases/download/v${PROJECT_VERSION}/${WEB_ZIP_FILE}"
 
-  rm -rf ${PROJECT_NAME} && mkdir -p ${PROJECT_NAME} || exit 1
-  unzip -o ${WEB_ZIP_FILE} -d "${DOWNLOADS}/${PROJECT_NAME}"
+  rm -rf ${PROJECT_NAME} && mkdir -p ${PROJECT_NAME} || exit 1
+  unzip -q -o ${WEB_ZIP_FILE} -d "${DOWNLOADS}/${PROJECT_NAME}"
   rm ${WEB_ZIP_FILE}
 fi
 
@@ -69,8 +69,8 @@ fi
 if [[ ! -d "${DOWNLOADS}/${NW}" ]]; then
   cd ${DOWNLOADS}
   echo "Downloading ${NW_GZ}..."
-  wget -kL http://dl.nwjs.io/${NW_RELEASE}/${NW_GZ}
-  tar xvzf ${NW_GZ}
+  wget -q "http://dl.nwjs.io/${NW_RELEASE}/${NW_GZ}"
+  tar xzf ${NW_GZ}
 fi
 
 # -----------
@@ -78,15 +78,16 @@ fi
 # -----------
 
 # Clean previous artifacts
-rm -rf "/vagrant/${OUTPUT_BASENAME}.deb"
 rm -rf "/vagrant/${OUTPUT_BASENAME}.tar.gz"
+rm -rf "/vagrant/${OUTPUT_BASENAME}.deb"
+rm -rf "/vagrant/${OUTPUT_BASENAME}.AppImage"
 
 # Clean previous releases directory
 rm -rf "${RELEASES}"
 mkdir -p "${RELEASES}"
 
 # Releases builds
-mv "${DOWNLOADS}/${PROJECT_NAME}" "${RELEASES}/" && cd "${RELEASES}/${PROJECT_NAME}" || exit 1
+mv "${DOWNLOADS}/${PROJECT_NAME}" "${RELEASES}/" && cd "${RELEASES}/${PROJECT_NAME}" || exit 1
 
 # Remove git files
 rm -Rf .git
@@ -112,10 +113,10 @@ cp -r "${RELEASES}/${PROJECT_NAME}" "${RELEASES}/desktop_release/nw/"
 ls "${RELEASES}/desktop_release/nw/"
 
 # Copy Cesium desktop sources files
-cp -r /vagrant/package.json "${RELEASES}/desktop_release/nw/"
-cp -r /vagrant/yarn.lock "${RELEASES}/desktop_release/nw/"
 cp -r /vagrant/cesium-desktop.js "${RELEASES}/desktop_release/nw"
 cp -r /vagrant/splash.html "${RELEASES}/desktop_release/nw"
+cp -r /vagrant/package.json "${RELEASES}/desktop_release/nw/"
+cp -r /vagrant/package-lock.json "${RELEASES}/desktop_release/nw/"
 
 # Injection
 sed -i 's/<script src="config.js"[^>]*><\/script>/<script src="config.js"><\/script><script src="..\/cesium-desktop.js"><\/script>/' ${RELEASES}/desktop_release/nw/${PROJECT_NAME}/index*.html || exit 1
@@ -125,9 +126,8 @@ cd "${RELEASES}/desktop_release/nw"
 npm install
 
 # Releases
-cp -R "${RELEASES}/desktop_release" "${RELEASES}/desktop_release_tgz"
-cd "${RELEASES}/desktop_release_tgz"
-tar czf /vagrant/${OUTPUT_BASENAME}.tar.gz * --exclude ".git" --exclude "coverage" --exclude "test"
+cd "${RELEASES}/desktop_release"
+tar czf "/vagrant/${OUTPUT_BASENAME}.tar.gz" *
 
 # -------------------------------------------------
 # Build Desktop version .deb
@@ -138,14 +138,29 @@ cp -r "/vagrant/package" "${RELEASES}/${PROJECT_NAME}-x64" || exit 1
 mkdir -p "${RELEASES}/${PROJECT_NAME}-x64/opt/${PROJECT_NAME}/" || exit 1
 chmod 755 ${RELEASES}/${PROJECT_NAME}-x64/DEBIAN/post*
 chmod 755 ${RELEASES}/${PROJECT_NAME}-x64/DEBIAN/pre*
-sed -i "s/Version:.*/Version:${PROJECT_VERSION}/g" ${RELEASES}/${PROJECT_NAME}-x64/DEBIAN/control || exit 1
+sed -i "s/Version:.*/Version: ${PROJECT_VERSION}/g" "${RELEASES}/${PROJECT_NAME}-x64/DEBIAN/control" || exit 1
+gzip --best -n ${RELEASES}/${PROJECT_NAME}-x64/usr/share/doc/${PROJECT_NAME}-desktop/changelog.* || exit 1
+
 cd "${RELEASES}/desktop_release/nw" || exit 1
 zip -qr "${RELEASES}/${PROJECT_NAME}-x64/opt/${PROJECT_NAME}/nw.nwb" *
 
-sed -i "s/Package: .*/Package: ${PROJECT_NAME}-desktop/g" "${RELEASES}/${PROJECT_NAME}-x64/DEBIAN/control" || exit 1
-cd ${RELEASES}/ || exit 1
+cd "${RELEASES}/" || exit 1
 fakeroot dpkg-deb --build "${PROJECT_NAME}-x64" || exit 1
 mv "${PROJECT_NAME}-x64.deb" "/vagrant/${OUTPUT_BASENAME}.deb" || exit 1
+
+rm -rf "${RELEASES}/${PROJECT_NAME}-x64" || exit 1
+
+# -------------------------------------------------
+# Build Desktop version .AppImage
+# -------------------------------------------------
+
+cp -f /vagrant/appimage/* "${RELEASES}/" || exit 1
+cp -f /vagrant/${OUTPUT_BASENAME}.tar.gz "${RELEASES}/" || exit 1
+cd "${RELEASES}"
+bash -ex ./pkg2appimage appimage.yml || exit 1
+
+OUTPUT_APPIMAGE=$(ls "./out/*.AppImage" | sort -V | tail -n 1)
+mv "${OUTPUT_APPIMAGE}" "/vagrant/${OUTPUT_BASENAME}.AppImage" || exit 1
 
 # -------------------------------------------------
 # Build Desktop sha256 files
@@ -154,3 +169,10 @@ mv "${PROJECT_NAME}-x64.deb" "/vagrant/${OUTPUT_BASENAME}.deb" || exit 1
 cd "/vagrant" || exit 1
 sha256sum ${OUTPUT_BASENAME}.tar.gz > ${OUTPUT_BASENAME}.tar.gz.sha256
 sha256sum ${OUTPUT_BASENAME}.deb > ${OUTPUT_BASENAME}.deb.sha256
+sha256sum ${OUTPUT_BASENAME}.AppImage > ${OUTPUT_BASENAME}.AppImage.sha256
+
+# -------------------------------------------------
+# Clean release files
+# -------------------------------------------------
+
+rm -rf "${RELEASES}"

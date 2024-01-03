@@ -1,6 +1,6 @@
 [Desktop Entry]
+Type=Application
 Name=Cesium Ğ1
 Exec=cesium
 Icon=/opt/cesium/nw/cesium/img/logo.png
-Type=Application
 Categories=Utility

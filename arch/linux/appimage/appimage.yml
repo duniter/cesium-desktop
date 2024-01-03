@@ -1,0 +1,24 @@
+app: cesium-desktop
+
+ingredients:
+  script:
+    - rm -rf cesium-desktop.AppDir/opt/cesium
+    - mkdir -p cesium-desktop.AppDir/opt/cesium
+    - TGZ_FILE=$(ls ../cesium-desktop-v*-linux-x64.tar.gz | sort -V | tail -n 1)
+    - tar xzf $TGZ_FILE -C cesium-desktop.AppDir/opt/cesium
+script:
+  - cat > cesium.desktop <<EOF
+  - [Desktop Entry]
+  - Type=Application
+  - Name=Cesium Ğ1
+  - Exec=cesium
+  - StartupNotify=true
+  - Icon=cesium
+  - Categories=Utility;
+  - EOF
+  - ln -s opt/cesium/nw/nw usr/bin/cesium
+  - mkdir -p usr/share/icons/hicolor/256x256/apps
+  - cp opt/cesium/nw/cesium/img/logo_256px.png usr/share/icons/hicolor/256x256/apps/cesium.png
+  - cp usr/share/icons/hicolor/256x256/apps/cesium.png ./app.png
+  - chmod ugo+r -R opt/cesium
+  - chmod ugo+x -R opt/cesium/nw/nw opt/cesium/nw/lib opt/cesium/nw/locales

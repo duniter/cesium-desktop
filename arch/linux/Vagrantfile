@@ -2,9 +2,8 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.define "cesium-release-ubuntu"
-  config.vm.box = "duniter/cesium_trusty64"
-  config.vm.box_url = "https://s3.eu-central-1.amazonaws.com/duniter/vagrant/duniter_trusty64.box"
+  config.vm.define "cesium-release-debian"
+  config.vm.box = "debian/bookworm64"
 
   config.vm.provision :shell, path: "bootstrap.sh"
 

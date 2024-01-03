@@ -3,7 +3,7 @@
 PROJECT_NAME=cesium
 REPO="duniter/cesium"
 REPO_PUBLIC_URL="https://github.com/${REPO}"
-NODEJS_VERSION=10
+NODEJS_VERSION=16
 TAG="$1"
 TAG_NAME="v$1"
 ARCH=`uname -m`
@@ -23,9 +23,7 @@ if [[ -z $TAG ]]; then
   echo ""
   echo "Examples:"
   echo ""
-  echo "  release.sh 1.2.3"
-  echo "  release.sh 1.4.0"
-  echo "  release.sh 1.4.1"
+  echo "  release.sh 1.7.12"
   echo ""
   exit 1
 fi
@@ -78,16 +76,14 @@ ZIP_BASENAME="${PROJECT_NAME}-${REMOTE_TAG}-web"
 if [[ ! -f "${DOWNLOADS}/${ZIP_BASENAME}.zip" ]]; then
     echo "Downloading ${PROJECT_NAME} web release..."
     mkdir -p ${DOWNLOADS} && cd ${DOWNLOADS} || exit 1
-    wget "${REPO_PUBLIC_URL}/releases/download/${REMOTE_TAG}/${ZIP_BASENAME}.zip"
-    if [[ $? -ne 0 ]]; then
-        exit 2
-    fi
+    wget -q "${REPO_PUBLIC_URL}/releases/download/${REMOTE_TAG}/${ZIP_BASENAME}.zip" || exit 2
     cd ${ROOT}
 fi
 
 if [[ "_$EXPECTED_ASSETS" == "_" ]]; then
-    EXPECTED_ASSETS="${PROJECT_NAME}-desktop-$REMOTE_TAG-linux-x64.deb
-${PROJECT_NAME}-desktop-$REMOTE_TAG-linux-x64.tar.gz
+    EXPECTED_ASSETS="${PROJECT_NAME}-desktop-$REMOTE_TAG-linux-x64.tar.gz
+${PROJECT_NAME}-desktop-$REMOTE_TAG-linux-x64.deb
+${PROJECT_NAME}-desktop-$REMOTE_TAG-linux-x64.AppImage
 ${PROJECT_NAME}-desktop-$REMOTE_TAG-windows-x64.exe"
 fi
 
@@ -104,7 +100,7 @@ for ASSET_BASENAME in $EXPECTED_ASSETS; do
   if [[ -z `echo $ASSETS | grep -F "$ASSET_BASENAME"` ]]; then
 
     # Debian
-    if [[ $ASSET_BASENAME == *"linux-x64.deb" ]] || [[ $ASSET_BASENAME == *"linux-x64.tar.gz" ]]; then
+    if [[ $ASSET_BASENAME == *"linux-x64.deb" ]] || [[ $ASSET_BASENAME == *"linux-x64.tar.gz" ]] || [[ $ASSET_BASENAME == *"linux-x64.AppImage" ]]; then
       if [[ $ARCH == "x86_64" ]]; then
 
         ASSET_PATH="$PWD/arch/linux/$ASSET_BASENAME"
@@ -125,6 +121,7 @@ for ASSET_BASENAME in $EXPECTED_ASSETS; do
 
         # Upload sha256 (if exists)
         if [[ -f "${ASSET_PATH}.sha256" ]]; then
+          echo "--- Uploading '${ASSET_BASENAME}.sha256' to github ..."
           node ./scripts/upload-release.js ${REMOTE_TAG} ${ASSET_PATH}.sha256
         fi
       else
