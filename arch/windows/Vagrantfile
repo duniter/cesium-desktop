@@ -2,12 +2,17 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
+  #config.vm.define "duniter-release-windows-server"
+  #config.vm.box = "gusztavvargadr/windows-server"
+
   config.vm.define "duniter-release-windows"
   config.vm.box = "https://s3.eu-central-1.amazonaws.com/duniter/vagrant/duniter_win7.box"
   config.vm.box_url = "duniter_win7.box"
 
   config.vm.provision :shell, path: "build.bat", run: 'always'
-  #config.vm.boot_timeout = 900
+  config.vm.boot_timeout = 900
+
+  #config.vm.network "forwarded_port", guest: 3389, host: 3390
 
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "4096"
