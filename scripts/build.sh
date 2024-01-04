@@ -6,7 +6,7 @@ case "$1" in
 make)
   case "$2" in
   linux)
-    cd arch/linux
+    cd arch/linux || exit 1
     if [[ ! -f "cesium-desktop-v$TAG-linux-x64.AppImage" ]]; then
       [[ $? -eq 0 ]] && echo ">> Copying Cesium Desktop sources..."
       [[ $? -eq 0 ]] && cp -f ../../src/* ./
@@ -28,18 +28,25 @@ make)
     fi
     ;;
   win)
-    cd arch/windows
+    cd arch/windows || exit 1
     if [[ ! -f "cesium-desktop-v$TAG-windows-x64.exe" ]]; then
       [[ $? -eq 0 ]] && echo ">> Copying Cesium Desktop sources..."
       [[ $? -eq 0 ]] && cp -f ../../src/* ./
       [[ $? -eq 0 ]] && cp -f ../../LICENSE ./LICENSE.txt
       # Win build need a copy of the web asset (download in build.bat failed)
       [[ $? -eq 0 ]] && cp "../../downloads/cesium-v$TAG-web.zip" ./
+
       # Download box locally
-      if [[ $? -eq 0  ]] && [[ ! -f ./duniter_win7.box ]]; then
-        echo ">> Downloading Windows VM..."
-        wget -kL https://s3.eu-central-1.amazonaws.com/duniter/vagrant/duniter_win7.box
+      #if [[ $? -eq 0  ]] && [[ ! -f ./duniter_win7.box ]]; then
+      #  echo ">> Downloading Windows 7 VM..."
+      #  wget -kL https://s3.eu-central-1.amazonaws.com/duniter/vagrant/duniter_win7.box
+      #fi
+      if [[ $? -eq 0  ]] && [[ ! -f ./windows-server-2022.box ]]; then
+        echo ">> Downloading Windows Server VM..."
+        wget -kL https://vagrantcloud.com/gusztavvargadr/boxes/windows-server/versions/2102.0.2312/providers/virtualbox/unknown/vagrant.box
+        mv vagrant.box windows-server-2022.box
       fi
+
       [[ $? -eq 0 ]] && echo ">> Starting Vagrant Windows VM..."
       [[ $? -eq 0 ]] && vagrant up --provision
       if [[ $? -ne 0 ]]; then
@@ -53,7 +60,7 @@ make)
     fi
     ;;
   osx)
-    cd arch/osx
+    cd arch/osx || exit 1
     if [[ ! -f "cesium-desktop-v$TAG-osx-x64.zip" ]]; then
       [[ $? -eq 0 ]] && echo ">> Copying Cesium Desktop sources..."
       [[ $? -eq 0 ]] && cp -f ../../src/* ./
@@ -87,7 +94,7 @@ make)
     fi
     ;;
   ios)
-    cd arch/osx
+    cd arch/osx || exit 1
     if [[ ! -f "cesium-v$TAG-ios.zip" ]]; then
       [[ $? -eq 0 ]] && echo ">> Copying Cesium Desktop sources..."
       [[ $? -eq 0 ]] && cp -f ../../src/* ./

@@ -1,6 +1,13 @@
-echo off
+@echo off
 
-set NW_VERSION=0.42.2
+:: Install dependencies
+call install.bat
+if %errorlevel% neq 0 (
+  ::pause
+  exit %errorlevel%
+)
+
+set NW_VERSION=0.83.0
 set NW_RELEASE=v%NW_VERSION%
 set NW_BASENAME=nwjs
 REM set NW_BASENAME=nwjs-sdk
@@ -8,30 +15,24 @@ set NW=%NW_BASENAME%-%NW_RELEASE%-win-x64
 set NW_GZ=%NW%.zip
 echo "NW.js %NW_VERSION%"
 
-REM NPM
-set PATH="C:\Users\vagrant\AppData\Roaming\npm";%PATH%
-REM InnoSetup
-set PATH="C:\Program Files (x86)\Inno Setup 5";%PATH%
 set SOURCE=C:\vagrant
 if not exist "%SOURCE%" (
-  set SOURCE=\\VBOXSVR\vagrant
-)
-if not exist "%SOURCE%" (
-  echo "vagrant folder not mounted !"
-  pause
+  echo "ERROR: Folder C:\vagrant not mounted!"
   exit 1
 )
-
 cd C:\Users\vagrant
-REM echo "Deleting old source..."
+
+
+echo "Deleting old files..."
 del /s /q cesium-v*-web.zip
 rd /s /q cesium
 rd /s /q cesium_release
+
 echo "Cloning Cesium (from github.com)..."
 git clone https://github.com/duniter/cesium.git
 if not exist C:\Users\vagrant\cesium (
   echo "ERROR: Cannot clone Cesium source!"
-  pause
+  ::pause
   exit 1
 )
 cd cesium
@@ -61,6 +62,7 @@ call 7z x %SOURCE%\%NW_GZ%
 move %NW% cesium_release
 if not exist cesium_release (
   echo "ERROR Missing cesium_release folder !"
+  ::pause
   exit 1
 )
 cd cesium_release
@@ -88,5 +90,5 @@ iscc %SOURCE%\cesium.iss /DROOT_PATH=%cd%
 move %cd%\Cesium.exe %SOURCE%\cesium-desktop-%CESIUM_TAG%-windows-x64.exe
 echo "Build done: binary available at cesium-desktop-%CESIUM_TAG%-windows-x64.exe"
 
-pause
+::pause
 exit 0
