@@ -100,7 +100,7 @@ for ASSET_BASENAME in $EXPECTED_ASSETS; do
   if [[ -z `echo $ASSETS | grep -F "$ASSET_BASENAME"` ]]; then
 
     # Debian
-    if [[ $ASSET_BASENAME == *"linux-x64.deb" ]] || [[ $ASSET_BASENAME == *"linux-x64.tar.gz" ]] || [[ $ASSET_BASENAME == *"linux-x64.AppImage" ]]; then
+    if [[ $ASSET_BASENAME == *"linux-x64."* ]]; then
       if [[ $ARCH == "x86_64" ]]; then
 
         ASSET_PATH="$PWD/arch/linux/$ASSET_BASENAME"

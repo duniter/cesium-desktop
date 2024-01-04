@@ -7,7 +7,7 @@ make)
   case "$2" in
   linux)
     cd arch/linux
-    if [[ ! -f "cesium-desktop-v$TAG-linux-x64.deb" ]]; then
+    if [[ ! -f "cesium-desktop-v$TAG-linux-x64.AppImage" ]]; then
       [[ $? -eq 0 ]] && echo ">> Copying Cesium Desktop sources..."
       [[ $? -eq 0 ]] && cp -f ../../src/* ./
       [[ $? -eq 0 ]] && cp -f ../../LICENSE ./LICENSE.txt

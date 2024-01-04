@@ -154,12 +154,16 @@ rm -rf "${RELEASES}/${PROJECT_NAME}-x64" || exit 1
 # Build Desktop version .AppImage
 # -------------------------------------------------
 
-cp -f /vagrant/appimage/* "${RELEASES}/" || exit 1
-cp -f /vagrant/${OUTPUT_BASENAME}.tar.gz "${RELEASES}/" || exit 1
+cp -f /vagrant/appimage.yml "${RELEASES}/" || exit 1
+cp -f /vagrant/pkg2appimage "${RELEASES}/" || exit 1
+ln -s /vagrant/${OUTPUT_BASENAME}.tar.gz "${RELEASES}/${OUTPUT_BASENAME}.tar.gz" || exit 1
 cd "${RELEASES}"
-bash -ex ./pkg2appimage appimage.yml || exit 1
-
-OUTPUT_APPIMAGE=$(ls "./out/*.AppImage" | sort -V | tail -n 1)
+./pkg2appimage appimage.yml || exit 1
+OUTPUT_APPIMAGE=$(ls ./out/*.AppImage | sort -V | tail -n 1)
+if [ ! -f "${OUTPUT_APPIMAGE}" ]; then
+  echo "ERROR: No AppImage file found in directory ${RELEASES}/out - Please check previous error"
+  exit 1
+fi
 mv "${OUTPUT_APPIMAGE}" "/vagrant/${OUTPUT_BASENAME}.AppImage" || exit 1
 
 # -------------------------------------------------

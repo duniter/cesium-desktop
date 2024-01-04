@@ -1,0 +1,31 @@
+app: cesium-desktop
+
+ingredients:
+  script:
+    - CESIUM_ROOT=cesium-desktop.AppDir/opt/cesium
+    - rm -rf $CESIUM_ROOT
+    - mkdir -p $CESIUM_ROOT
+    - TGZ_FILE=$(ls ../cesium-desktop-v*-linux-x64.tar.gz | sort -V | tail -n 1)
+    - tar xzf $TGZ_FILE -C $CESIUM_ROOT
+script:
+  - cat > cesium.desktop <<EOF
+  - [Desktop Entry]
+  - Type=Application
+  - Name=Cesium Ğ1
+  - Exec=cesium
+  - StartupNotify=true
+  - Icon=cesium
+  - Categories=Utility;
+  - EOF
+  - ln -s opt/cesium/nw/nw usr/bin/cesium
+  - mkdir -p usr/share/icons/hicolor/256x256/apps
+  - cp opt/cesium/nw/cesium/img/logo_32px.png usr/share/icons/hicolor/32x32/apps/cesium.png
+  - cp opt/cesium/nw/cesium/img/logo_128px.png usr/share/icons/hicolor/128x128/apps/cesium.png
+  - cp opt/cesium/nw/cesium/img/logo_256px.png usr/share/icons/hicolor/256x256/apps/cesium.png
+  - cp opt/cesium/nw/cesium/img/logo_512px.png usr/share/icons/hicolor/512x512/apps/cesium.png
+  - cp usr/share/icons/hicolor/256x256/apps/cesium.png .
+  - chmod +r -R opt/cesium
+  - chmod +x opt/cesium/nw/nw opt/cesium/nw/lib opt/cesium/nw/locales
+  - sed -i 's/Cesium/Cesium Ğ1/g' opt/cesium/nw/splash.html
+  - sed -i 's/Cesium/Cesium Ğ1/g' opt/cesium/nw/cesium/index.html
+  - sed -i 's/"Cesium"/"Cesium Ğ1"/g' opt/cesium/nw/cesium-desktop.js
