@@ -24,8 +24,8 @@ script:
   - cp opt/cesium/nw/cesium/img/logo_256px.png usr/share/icons/hicolor/256x256/apps/cesium.png
   - cp opt/cesium/nw/cesium/img/logo_512px.png usr/share/icons/hicolor/512x512/apps/cesium.png
   - cp usr/share/icons/hicolor/256x256/apps/cesium.png .
-  - chmod +r -R opt/cesium
-  - chmod +x opt/cesium/nw/nw opt/cesium/nw/lib opt/cesium/nw/locales
+  - chmod a+rX -R opt/cesium
+  - chmod a+x opt/cesium/nw/nw
   - sed -i 's/Cesium/Cesium Ğ1/g' opt/cesium/nw/splash.html
   - sed -i 's/Cesium/Cesium Ğ1/g' opt/cesium/nw/cesium/index.html
   - sed -i 's/"Cesium"/"Cesium Ğ1"/g' opt/cesium/nw/cesium-desktop.js

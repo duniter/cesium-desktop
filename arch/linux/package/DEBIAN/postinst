@@ -3,14 +3,14 @@
 CESIUM_ROOT=/opt/cesium
 CESIUM_TEST=/opt/cesium-test
 
-chmod +r -R $CESIUM_ROOT
-
 if [[ -f "$CESIUM_ROOT/nw.nwb" ]]; then
   echo "Unpack nw.nwb ..."
   unzip -q -d "$CESIUM_ROOT/nw" "$CESIUM_ROOT/nw.nwb"
-  chmod +x $CESIUM_ROOT/nw/nw $CESIUM_ROOT/nw/lib $CESIUM_ROOT/nw/locales
+  chmod a+x $CESIUM_ROOT/nw/nw
   ln -s $CESIUM_ROOT/nw/nw /usr/bin/cesium
 fi
+
+chmod a+rX -R $CESIUM_ROOT
 
 # Create a Cesium for G1-Test
 cd /opt
