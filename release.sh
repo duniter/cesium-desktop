@@ -3,7 +3,7 @@
 PROJECT_NAME=cesium
 REPO="duniter/cesium"
 REPO_PUBLIC_URL="https://github.com/${REPO}"
-NODEJS_VERSION=16
+NODEJS_VERSION=18
 TAG="$1"
 TAG_NAME="v$1"
 ARCH=`uname -m`
