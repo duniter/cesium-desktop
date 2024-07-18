@@ -27,6 +27,7 @@ arch/windows/yarn.lock
 arch/windows/LICENSE.txt
 arch/windows/*.box
 arch/windows/*.exe
+arch/windows/*.zip
 arch/windows/.directory
 
 arch/osx/.vagrant
