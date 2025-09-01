@@ -75,7 +75,7 @@ ASSETS=`node ./scripts/create-release.js $REMOTE_TAG create`
 ZIP_BASENAME="${PROJECT_NAME}-${REMOTE_TAG}-web"
 if [[ ! -f "${DOWNLOADS}/${ZIP_BASENAME}.zip" ]]; then
     echo "Downloading ${PROJECT_NAME} web release..."
-    mkdir -p ${DOWNLOADS} && cd ${DOWNLOADS} || exit 1
+    mkdir -p "${DOWNLOADS}" && cd "${DOWNLOADS}" || exit 1
     wget -q "${REPO_PUBLIC_URL}/releases/download/${REMOTE_TAG}/${ZIP_BASENAME}.zip" || exit 2
     cd ${ROOT}
 fi
